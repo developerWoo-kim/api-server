@@ -1,13 +1,15 @@
 package gw.apiserver.common.security.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
 import gw.apiserver.common.security.core.JwtTokenProvider;
-import gw.apiserver.common.security.core.response.JwtExceptionCode;
-import gw.apiserver.common.security.core.response.JwtResponseUtil;
 import gw.apiserver.common.security.exception.JwtTokenExceptionTypes;
+import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +39,7 @@ import java.util.List;
 @Slf4j
 public class JwtVerificationFilter extends BasicAuthenticationFilter {
     private static final List<String> EXCLUDE_URL =
-            List.of("/", "/members/signup", "/auth/login", "/auth/reissue");
+            List.of("/", "/members/signup", "/auth/login", "/auth/token", "/auth/reissue");
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtVerificationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
@@ -72,8 +74,18 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
         } catch (JwtException e) {
             JwtTokenExceptionTypes jwtTokenExceptionTypes = JwtTokenExceptionTypes.findOf(e.getClass().getSimpleName());
 
-            JwtResponseUtil.sendErrorResponse(request, response, JwtExceptionCode.TOKEN_MALFORMED);
+            ObjectMapper om = new ObjectMapper();
+            CommonErrorResponse errorResponse = CommonErrorResponse.commonError(
+                    HttpStatus.FORBIDDEN.toString(),
+                    request.getRequestURI(),
+                    jwtTokenExceptionTypes.getCode(),
+                    jwtTokenExceptionTypes.getMessage()
+            );
 
+            response.setCharacterEncoding("utf-8");
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.getWriter().write(om.writeValueAsString(errorResponse));
             System.out.println(jwtTokenExceptionTypes);
         }
         filterChain.doFilter(request, response);

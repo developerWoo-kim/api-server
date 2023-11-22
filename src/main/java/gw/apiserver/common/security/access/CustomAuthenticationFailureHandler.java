@@ -5,10 +5,8 @@ import gw.apiserver.common.security.exception.AuthenticationExceptionTypes;
 import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -35,8 +33,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         CommonErrorResponse commonErrorResponse = CommonErrorResponse.commonError(
                 HttpStatus.UNAUTHORIZED.toString(),
                 request.getRequestURI(),
-                "auth-001",
-                exceptionTypes.getValue()
+                exceptionTypes.getCode(),
+                exceptionTypes.getMessage()
         );
 
         response.setCharacterEncoding("utf-8");

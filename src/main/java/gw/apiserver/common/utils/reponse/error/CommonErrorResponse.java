@@ -1,6 +1,7 @@
 package gw.apiserver.common.utils.reponse.error;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import lombok.Setter;
  * @since 2023.08.31
  * @version 1.0
  */
+@Schema(description = "에러 응답")
 @Getter @Setter
 @AllArgsConstructor
 public class CommonErrorResponse extends AbstractErrorResponse{

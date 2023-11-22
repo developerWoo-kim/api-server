@@ -9,20 +9,45 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.*;
+
 @Getter
 public enum AuthenticationExceptionTypes {
-    BadCredentialsException("아이디 또는 비밀번호를 잘못 입력하셨습니다.\n입력하신 내용을 다시 확인해주세요."),
-    UsernameNotFoundException("아이디 또는 비밀번호를 잘못 입력하셨습니다.\n입력하신 내용을 다시 확인해주세요."),
-    AccountExpiredException("계정만료"),
-    CredentialsExpiredException("비밀번호 변경주기가 도래하였습니다."),
-    DisabledException("계정비활성화"),
-    LockedException(""),
-    NoneException("알 수 없는 에러가 발생 하였습니다.\n관리자에게 문의해 주시기 바랍니다.");
+    BadCredentialsException(
+            CMM_AUTH_BAD_CREDENTIALS.getCode(),
+            CMM_AUTH_BAD_CREDENTIALS.getMessage()
+    ),
+    UsernameNotFoundException(
+            CMM_AUTH_BAD_CREDENTIALS.getCode(),
+            CMM_AUTH_BAD_CREDENTIALS.getMessage()
+    ),
+    AccountExpiredException(
+            CMM_AUTH_ACCOUNT_EXPIRED.getCode(),
+            CMM_AUTH_ACCOUNT_EXPIRED.getMessage()
+    ),
+    CredentialsExpiredException(
+            CMM_AUTH_CREDENTIALS_EXPIRED.getCode(),
+            CMM_AUTH_CREDENTIALS_EXPIRED.getMessage()
+    ),
+    DisabledException(
+            CMM_AUTH_ACCOUNT_DISABLED.getCode(),
+            CMM_AUTH_ACCOUNT_DISABLED.getMessage()
+    ),
+    LockedException(
+            CMM_AUTH_ACCOUNT_LOCKED.getCode(),
+            CMM_AUTH_ACCOUNT_LOCKED.getMessage()
+    ),
+    NoneException(
+            CMM_SYSTEM_ERROR.getCode(),
+            CMM_SYSTEM_ERROR.getMessage()
+    );
 
-    private String value;
+    private String code;
+    private String message;
 
-    AuthenticationExceptionTypes(String value) {
-        this.value = value;
+    AuthenticationExceptionTypes(String code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
     private static final Map<String, AuthenticationExceptionTypes> descriptions = Collections

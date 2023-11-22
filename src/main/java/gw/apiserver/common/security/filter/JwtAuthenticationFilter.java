@@ -1,12 +1,14 @@
 package gw.apiserver.common.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gw.apiserver.common.security.TokenDto;
+import gw.apiserver.common.security.core.response.dto.TokenDto;
 import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
 import gw.apiserver.common.security.core.JwtTokenProvider;
 import gw.apiserver.member.controller.dto.LoginDto;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -90,8 +92,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         jwtTokenProvider.setRefreshTokenHeader(tokenDto.getRefreshToken(), response);
 
         ObjectMapper om = new ObjectMapper();
-
         String result = om.writeValueAsString(tokenDto);
+
+        response.setCharacterEncoding("utf-8");
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(result);
 
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);

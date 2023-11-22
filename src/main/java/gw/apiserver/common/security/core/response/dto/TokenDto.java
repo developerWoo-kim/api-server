@@ -1,4 +1,4 @@
-package gw.apiserver.common.security;
+package gw.apiserver.common.security.core.response.dto;
 
 import lombok.Builder;
 import lombok.Data;

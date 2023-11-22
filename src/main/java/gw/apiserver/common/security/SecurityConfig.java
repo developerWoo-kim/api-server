@@ -1,5 +1,6 @@
 package gw.apiserver.common.security;
 
+import gw.apiserver.common.security.access.CustomAuthenticationEntryPoint;
 import gw.apiserver.common.security.access.CustomAuthenticationFailureHandler;
 import gw.apiserver.common.security.access.CustomAuthenticationSuccessHandler;
 import gw.apiserver.common.security.core.JwtTokenProvider;
@@ -57,7 +58,7 @@ public class SecurityConfig {
                 .and()
                 .apply(new CustomFilterConfigurer())
                 .and()
-                .authorizeRequests(authorize -> authorize.antMatchers("/api/v1/user/**", "/auth/token")
+                .authorizeRequests(authorize -> authorize.antMatchers("/api/v1/user/**")
                         .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
                         .antMatchers("/api/v1/manager/**")
                         .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
@@ -106,7 +107,7 @@ public class SecurityConfig {
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider);
 
-            jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+            jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 

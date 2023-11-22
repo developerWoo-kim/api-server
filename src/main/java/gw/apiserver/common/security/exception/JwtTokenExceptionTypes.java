@@ -1,6 +1,5 @@
 package gw.apiserver.common.security.exception;
 
-import gw.apiserver.common.security.core.response.JwtExceptionCode;
 import lombok.Getter;
 
 import java.util.Collections;
@@ -20,12 +19,12 @@ public enum JwtTokenExceptionTypes {
     IllegalArgumentException(TOKEN_ILLEGAL_ARGUMENT.getErrorCode(), TOKEN_ILLEGAL_ARGUMENT.getMessage()),
     SignatureException(TOKEN_ILLEGAL_ARGUMENT.getErrorCode(), TOKEN_ILLEGAL_ARGUMENT.getMessage());
 
-    private final String errorCode;
+    private final String code;
     private final String message;
 
 
-    JwtTokenExceptionTypes(String errorCode, String message) {
-        this.errorCode = errorCode;
+    JwtTokenExceptionTypes(String code, String message) {
+        this.code = code;
         this.message = message;
     }
 

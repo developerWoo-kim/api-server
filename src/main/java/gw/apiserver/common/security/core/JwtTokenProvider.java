@@ -1,6 +1,8 @@
 package gw.apiserver.common.security.core;
 
-import gw.apiserver.common.security.TokenDto;
+import gw.apiserver.common.security.core.response.dto.AccessTokenDto;
+import gw.apiserver.common.security.core.response.dto.RefreshTokenDto;
+import gw.apiserver.common.security.core.response.dto.TokenDto;
 import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -18,10 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Getter
 @Slf4j
@@ -93,6 +92,31 @@ public class JwtTokenProvider {
     }
 
     /**
+     * Access Token 갱신
+     * @param memberId String
+     * @return AccessTokenDto
+     */
+    public AccessTokenDto generateAccessTokenDto(String memberId) {
+        Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMillis);
+        Map<String, Object> accessClaims = new HashMap<>();
+        accessClaims.put("memberId", memberId);
+        String accessToken = Jwts.builder()
+                .setClaims(accessClaims)
+                .setSubject(memberId)
+                .setExpiration(accessTokenExpiresIn)
+                .setIssuedAt(Calendar.getInstance().getTime())
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+
+        return AccessTokenDto.builder()
+                .grantType(BEARER_TYPE)
+                .authorizationType(AUTHORIZATION_HEADER)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .build();
+    }
+
+    /**
      * 토큰 검증
      * @param token String
      * @param req HttpServletRequest
@@ -101,7 +125,7 @@ public class JwtTokenProvider {
      * @throws IOException
      */
     public boolean validateToken(String token, HttpServletRequest req, HttpServletResponse resp) {
-        Claims claims = parseClaims(token);
+        parseClaims(token);
         return true;
     }
 
@@ -160,8 +184,8 @@ public class JwtTokenProvider {
      */
     public String resolveRefreshToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(REFRESH_HEADER);
-        if (StringUtils.hasText(bearerToken)) {
-            return bearerToken;
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+            return bearerToken.substring(7);
         }
         return null;
     }
