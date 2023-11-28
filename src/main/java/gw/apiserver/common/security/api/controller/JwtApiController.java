@@ -4,6 +4,7 @@ package gw.apiserver.common.security.api.controller;
 import gw.apiserver.common.security.api.service.JwtApiService;
 import gw.apiserver.common.security.core.response.dto.AccessTokenDto;
 import gw.apiserver.common.utils.reponse.error.AbstractErrorResponse;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Tag(name = "token", description = "토큰 발급 API")
+@Api(tags = {"토큰 API"})
 @RestController
 @RequiredArgsConstructor
 public class JwtApiController {
@@ -44,6 +45,11 @@ public class JwtApiController {
     })
     @PostMapping("/auth/token")
     public AccessTokenDto getAccessToken(HttpServletRequest req, HttpServletResponse rep) {
+        return jwtApiService.getAccessToken(req, rep);
+    }
+
+    @PostMapping("/auth/token2")
+    public AccessTokenDto getAccessToken2(HttpServletRequest req, HttpServletResponse rep) {
         return jwtApiService.getAccessToken(req, rep);
     }
 

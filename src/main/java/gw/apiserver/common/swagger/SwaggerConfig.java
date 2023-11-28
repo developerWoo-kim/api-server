@@ -26,8 +26,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("GW API 가이드")
-                .description("api 문서 입니다.")
+                .title("Adruck Api 가이드")
+                .description("2023-11-28 작업 중")
                 .version("1.0")
                 .build();
     }

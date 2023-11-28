@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
 import gw.apiserver.common.security.core.JwtTokenProvider;
 import gw.apiserver.common.security.exception.JwtTokenExceptionTypes;
+import gw.apiserver.common.security.exception.custom.AccessTokenNotFound;
+import gw.apiserver.common.utils.reponse.code.CommonErrorCode;
 import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
+import gw.apiserver.common.utils.reponse.utils.CommonErrorResponseUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+
+import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.CMM_AUTH_ACCESS_TOKEN_NOT_FOUND;
 
 
 /**
@@ -38,8 +44,11 @@ import java.util.List;
  */
 @Slf4j
 public class JwtVerificationFilter extends BasicAuthenticationFilter {
-    private static final List<String> EXCLUDE_URL =
-            List.of("/", "/members/signup", "/auth/login", "/auth/token", "/auth/reissue");
+//    private static final List<String> EXCLUDE_URL =
+//            List.of("/", "/members/signup", "/auth/login",
+//                    "/swagger-ui/**",
+//                    "/auth/token", "/auth/reissue", "/api/v1/ad/page-list"
+//            );
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtVerificationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
@@ -49,46 +58,39 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = jwtTokenProvider.resolveAccessToken(request);
-
         try {
-            if(StringUtils.hasText(accessToken) && jwtTokenProvider.validateToken(accessToken, request, response)) {
+            String accessToken = jwtTokenProvider.resolveAccessToken(request);
+
+            if(jwtTokenProvider.validateToken(accessToken, request, response)) {
                 // JWT 토큰을 복호화하여 토큰 정보를 반환
-                Claims claims = jwtTokenProvider.parseClaims(accessToken);
-                String authority = claims.get("role").toString();
-
-                CustomUserDetails customUserDetails = CustomUserDetails.of(
-                        claims.getSubject(),
-                        authority);
-
-                log.info("# AuthMember.getRoles 권한 체크 = {}", customUserDetails.getAuthorities().toString());
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        customUserDetails,
-                        null,
-                        customUserDetails.getAuthorities()
-                );
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+//                Claims claims = jwtTokenProvider.parseClaims(accessToken);
+//                String authority = claims.get("role").toString();
+//
+//                CustomUserDetails customUserDetails = CustomUserDetails.of(
+//                        claims.getSubject(),
+//                        authority);
+//🤩
+//                log.info("# AuthMember.getRoles 권한 체크 = {}", customUserDetails.getAuthorities().toString());
+//
+//                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                        customUserDetails,
+//                        null,
+//                        customUserDetails.getAuthorities()
+//                );
+//
+//                SecurityContextHolder.getContext().setAuthentication(authentication);
+                filterChain.doFilter(request, response);
             }
-        } catch (JwtException e) {
+        } catch (JwtException | AccessTokenNotFound e) {
             JwtTokenExceptionTypes jwtTokenExceptionTypes = JwtTokenExceptionTypes.findOf(e.getClass().getSimpleName());
-
-            ObjectMapper om = new ObjectMapper();
             CommonErrorResponse errorResponse = CommonErrorResponse.commonError(
-                    HttpStatus.FORBIDDEN.toString(),
+                    HttpStatus.UNAUTHORIZED.toString(),
                     request.getRequestURI(),
                     jwtTokenExceptionTypes.getCode(),
                     jwtTokenExceptionTypes.getMessage()
             );
-
-            response.setCharacterEncoding("utf-8");
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.getWriter().write(om.writeValueAsString(errorResponse));
-            System.out.println(jwtTokenExceptionTypes);
+            CommonErrorResponseUtil.sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED, errorResponse);
         }
-        filterChain.doFilter(request, response);
     }
 
     /**
@@ -98,11 +100,11 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
      * @return boolean
      * @throws ServletException HttpServletRequest
      */
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        boolean result = EXCLUDE_URL.stream()
-                .anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
-
-        return result;
-    }
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        boolean result = EXCLUDE_URL.stream()
+//                .anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+//
+//        return result;
+//    }
 }

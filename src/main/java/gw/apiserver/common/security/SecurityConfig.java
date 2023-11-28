@@ -1,5 +1,6 @@
 package gw.apiserver.common.security;
 
+import gw.apiserver.common.security.access.CustomAccessDeniedHandler;
 import gw.apiserver.common.security.access.CustomAuthenticationEntryPoint;
 import gw.apiserver.common.security.access.CustomAuthenticationFailureHandler;
 import gw.apiserver.common.security.access.CustomAuthenticationSuccessHandler;
@@ -13,13 +14,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -40,38 +44,11 @@ import java.util.List;
 public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                .headers().frameOptions().sameOrigin()
-                .and()
-                .csrf().disable()
-                .cors().configurationSource(corsConfigurationSource())// CrossOrigin(인증X), 시리큐리 필터에 등록(인증O)
-                .and()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .exceptionHandling()
-//                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-//                .accessDeniedHandler(new JwtDeniedHandler())
-                .and()
-                .apply(new CustomFilterConfigurer())
-                .and()
-                .authorizeRequests(authorize -> authorize.antMatchers("/api/v1/user/**")
-                        .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                        .antMatchers("/api/v1/manager/**")
-                        .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                        .antMatchers("/api/v1/admin/**")
-                        .access("hasRole('ROLE_ADMIN')")
-                        .anyRequest().permitAll())
-                .build();
-
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+//        return new BCryptPasswordEncoder();
+        return new MessageDigestPasswordEncoder("SHA-256");
     }
 
     @Bean
@@ -101,6 +78,58 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().antMatchers(
+                "/", "/members/signup",
+                "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs",
+                "/auth/token", "/auth/reissue"
+        );
+    }
+
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .headers().frameOptions().sameOrigin()
+                .and()
+                .csrf().disable()
+                .cors().configurationSource(corsConfigurationSource())// CrossOrigin(인증X), 시리큐리 필터에 등록(인증O)
+                .and()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        // 권한 없는 사용자에 대한 예외 처리
+        http
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 인증
+                .accessDeniedHandler(new CustomAccessDeniedHandler());          // 인가
+
+        http
+
+                .authorizeRequests(authorize -> authorize
+                        .antMatchers("/api/v1/user/**")
+                        .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+                        .antMatchers("/api/v1/manager/**")
+                        .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+                        .antMatchers("/api/v1/admin/**")
+                        .access("hasRole('ROLE_ADMIN')")
+                        .anyRequest().permitAll()
+                );
+
+        //                .antMatchers("/api/v1/manager/**")
+//                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+//                .antMatchers("/api/v1/admin/**")
+//                .access("hasRole('ROLE_ADMIN')")
+
+
+
+        http
+                .apply(new CustomFilterConfigurer());
+
+        return http.build();
+    }
+
     public class CustomFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity>{
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
@@ -111,11 +140,10 @@ public class SecurityConfig {
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
 
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(authenticationManager, jwtTokenProvider);
             http
                     // 시큐리티 필터 체인이 모든 필터의 우선 순위를 가진다
                     .addFilter(jwtAuthenticationFilter)
-                    .addFilter(jwtVerificationFilter);
+                    .addFilter(new JwtVerificationFilter(authenticationManager, jwtTokenProvider));
 
         }
     }

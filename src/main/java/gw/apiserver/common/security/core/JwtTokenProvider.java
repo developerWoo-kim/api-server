@@ -4,6 +4,7 @@ import gw.apiserver.common.security.core.response.dto.AccessTokenDto;
 import gw.apiserver.common.security.core.response.dto.RefreshTokenDto;
 import gw.apiserver.common.security.core.response.dto.TokenDto;
 import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
+import gw.apiserver.common.security.exception.custom.AccessTokenNotFound;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -174,7 +175,7 @@ public class JwtTokenProvider {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
-        return null;
+        throw new AccessTokenNotFound();
     }
 
     /**

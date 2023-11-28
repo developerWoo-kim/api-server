@@ -1,6 +1,7 @@
 package gw.apiserver.common.security.exception.handler;
 
 import gw.apiserver.common.security.exception.JwtTokenExceptionTypes;
+import gw.apiserver.common.security.exception.custom.AccessTokenNotFound;
 import gw.apiserver.common.security.exception.custom.RefreshTokenNotFound;
 import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
 import io.jsonwebtoken.JwtException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.CMM_AUTH_ACCESS_TOKEN_NOT_FOUND;
 import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.CMM_AUTH_REFRESH_TOKEN_NOT_FOUND;
 
 @RestControllerAdvice(basePackages = {"gw.apiserver.common.security"})
@@ -20,9 +22,17 @@ import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.CMM_AUTH_RE
 public class JwtExceptionHandler {
 
     @ExceptionHandler(RefreshTokenNotFound.class)
-    public ResponseEntity<CommonErrorResponse> handlerRefreshTokenNotFoundException(HttpServletRequest req, RefreshTokenNotFound exception) {
+    public ResponseEntity<CommonErrorResponse> handlerRefreshTokenNotFoundException(HttpServletRequest req) {
         CommonErrorResponse errorResponse = CommonErrorResponse
                 .commonError(HttpStatus.BAD_REQUEST.toString(), req.getRequestURI(), CMM_AUTH_REFRESH_TOKEN_NOT_FOUND.getCode(), CMM_AUTH_REFRESH_TOKEN_NOT_FOUND.getMessage());
+        //응답 바디에  errorResponse를 담아 리턴한다.
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AccessTokenNotFound.class)
+    public ResponseEntity<CommonErrorResponse> handlerAccessTokenNotFoundException(HttpServletRequest req) {
+        CommonErrorResponse errorResponse = CommonErrorResponse
+                .commonError(HttpStatus.BAD_REQUEST.toString(), req.getRequestURI(), CMM_AUTH_ACCESS_TOKEN_NOT_FOUND.getCode(), CMM_AUTH_ACCESS_TOKEN_NOT_FOUND.getMessage());
         //응답 바디에  errorResponse를 담아 리턴한다.
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }

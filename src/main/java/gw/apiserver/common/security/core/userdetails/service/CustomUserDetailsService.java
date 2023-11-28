@@ -2,6 +2,7 @@ package gw.apiserver.common.security.core.userdetails.service;
 
 import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
 import gw.apiserver.member.repository.MemberRepository;
+import gw.apiserver.oms.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,10 +13,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return memberRepository.findById(username)
+//        return memberRepository.findById(username)
+//                .map(CustomUserDetails::new)
+//                .orElseThrow(() -> new UsernameNotFoundException(""));
+
+        return userRepository.findById(username)
                 .map(CustomUserDetails::new)
                 .orElseThrow(() -> new UsernameNotFoundException(""));
     }

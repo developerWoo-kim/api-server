@@ -1,6 +1,7 @@
 package gw.apiserver.common.security.core.userdetails;
 
 import gw.apiserver.member.domain.Member;
+import gw.apiserver.oms.user.domain.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,10 +17,10 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     private String roles;
 
-    public CustomUserDetails(Member member) {
-        this.memberId = member.getMemberId();
-        this.password = member.getPassword();
-        this.roles = member.getRoles();
+    public CustomUserDetails(User member) {
+        this.memberId = member.getUserId();
+        this.password = member.getPswd();
+        this.roles = "USER";
     }
 
     public CustomUserDetails(String memberId, String roles) {

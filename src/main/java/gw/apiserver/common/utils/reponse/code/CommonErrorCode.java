@@ -19,7 +19,8 @@ public enum CommonErrorCode {
     CMM_AUTH_CREDENTIALS_EXPIRED("auth-003", "비밀번호 변경주기가 도래하였습니다."),
     CMM_AUTH_ACCOUNT_DISABLED("auth-004", "계정비활성화"),
     CMM_AUTH_ACCOUNT_LOCKED("auth-005", ""),
-    CMM_AUTH_REFRESH_TOKEN_NOT_FOUND("auth-006", "Refresh Token이 누락 되었습니다.");
+    CMM_AUTH_REFRESH_TOKEN_NOT_FOUND("auth-006", "Refresh Token이 누락 되었습니다."),
+    CMM_AUTH_ACCESS_TOKEN_NOT_FOUND("auth-007", "Access Token이 누락 되었습니다.");
 
 
     private String code;
