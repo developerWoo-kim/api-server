@@ -16,8 +16,8 @@ public class ComtCcmnDetailCode {
     @Id
     @Column(name = "code")
     private String code;
-
     private String codeId;
+    private String codeNm;
     private String codeDc;
     private String useAt;
     private LocalDateTime frstRegistPnttm;

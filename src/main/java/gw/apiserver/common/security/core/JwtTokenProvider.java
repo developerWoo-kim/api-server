@@ -29,7 +29,6 @@ import java.util.*;
 public class JwtTokenProvider {
     public static final String BEARER_TYPE = "Bearer";
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String REFRESH_HEADER = "Refresh";
     public static final String BEARER_PREFIX = "Bearer ";
 
     @Value("${jwt.secret-key}")
@@ -161,7 +160,7 @@ public class JwtTokenProvider {
      * @param response
      */
     public void setRefreshTokenHeader(String refreshToken, HttpServletResponse response) {
-        response.setHeader(REFRESH_HEADER, refreshToken);
+        response.setHeader(AUTHORIZATION_HEADER, refreshToken);
     }
 
     /**
@@ -184,7 +183,7 @@ public class JwtTokenProvider {
      * @return String
      */
     public String resolveRefreshToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(REFRESH_HEADER);
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }

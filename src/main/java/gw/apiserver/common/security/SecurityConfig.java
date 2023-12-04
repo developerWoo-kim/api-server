@@ -83,7 +83,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring().antMatchers(
                 "/", "/members/signup",
                 "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs",
-                "/auth/token", "/auth/reissue"
+                "/auth/token", "/auth/reissue",
+                "/api/**"
         );
     }
 
