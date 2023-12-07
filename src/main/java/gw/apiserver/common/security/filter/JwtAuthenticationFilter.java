@@ -10,9 +10,12 @@ import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -39,6 +42,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * login 요청을 하면 로그인 시도를 위해서 실행되는 함수
@@ -62,10 +66,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // ServletInputStream을 LoginDto 객체로 역직렬화
         ObjectMapper objectMapper = new ObjectMapper();
         LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
-        return authenticationManager.authenticate(authenticationToken);
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+        CustomUserDetails userDetails = (CustomUserDetails) authenticate.getPrincipal();
+
+        // 비밀번호 체크 -> 할 필요가 없음 왜냐하면 AuthenticationManager에서 인증 작업을 진행하면 ProviderManager에서 비밀번호 체크를 하게 되어 있음.
+//        if(!passwordEncoder.matches(loginDto.getPassword(), userDetails.getPassword())) {
+//            this.logger.debug("Failed to authenticate since password does not match stored value");
+//            throw new BadCredentialsException(this.messages
+//                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+//        }
+
+        return authenticate;
     }
 
     /**

@@ -1,6 +1,7 @@
 package gw.apiserver.oms.user.controller;
 
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
+import gw.apiserver.oms.user.controller.form.UserJoinForm;
 import gw.apiserver.oms.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -9,9 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Api(tags = {"회원 API"})
 @RestController
@@ -40,5 +39,19 @@ public class UserApiController {
     @GetMapping("/api/v1/user/{id}/id-duple-check")
     public ResponseEntity<CommonResponse> idDuplicationCheck(@PathVariable("id") String id) {
         return userService.idDuplicationCheck(id);
+    }
+
+    @Operation(
+            summary = "회원가입",
+            description = "회원가입",
+            responses = {
+
+                    @ApiResponse(responseCode = "200", description = "회원가입 완료"),
+                    @ApiResponse(responseCode = "400", description = ""),
+            }
+    )
+    @PostMapping("/api/v1/user/join")
+    public ResponseEntity<CommonResponse> joinUser(@RequestBody UserJoinForm form) {
+        return userService.joinUser(form);
     }
 }

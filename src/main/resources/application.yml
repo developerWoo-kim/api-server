@@ -35,6 +35,52 @@ spring:
     open-in-view: false # OSIV ??
 
 ---
+# ?? ??
+spring:
+  config:
+    activate:
+      on-profile: "dev"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://116.36.82.239:3306/dpubad_dev?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: dpubad_dev
+    password: 'iV1!8e4dq6'
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        #show_sql: true # ??? ??? ??
+        format_sql: true
+        default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.H2Dialect
+
+    open-in-view: false # OSIV ??
+
+---
+# ?? ??
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://175.125.94.154:3306/dpub_ad?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: dpubad
+    password: 'dpubad0101!'
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        #show_sql: true # ??? ??? ??
+        format_sql: true
+        default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.H2Dialect
+
+    open-in-view: false # OSIV ??
+
+---
 # ??
 spring:
   config:
@@ -43,9 +89,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  devtools:
-    restart:
-      enabled: false
+#  devtools:
+#    restart:
+#      enabled: false
   data:
     web:
       pageable:

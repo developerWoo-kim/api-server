@@ -1,0 +1,56 @@
+server:
+  port: 8090
+  error:
+    include-exception: false
+    include-stacktrace: never # ?? ??? stacktrace ??? ??? ? ??
+---
+# ?? ?? ??
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://116.36.82.239:3306/dpubad_dev?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: dpubad_dev
+    password: 'iV1!8e4dq6'
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        #show_sql: true # ??? ??? ??
+        format_sql: true
+        default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.H2Dialect
+
+    open-in-view: false # OSIV ??
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+---
+
+logging.level:
+  org.hibernate.SQL: debug # ??? ??
+
+#  org.hibernate.type: trace #??? ?? 2.x, hibernate5
+# org.hibernate.orm.jdbc.bind: trace #??? ?? 3.x, hibernate6
+
+
+jwt:
+  secret-key: 'fa5e2d1c7e68b4173f7099a756a243d2b84e3a3d1c4b6f0ed9e4bebf4682d22e'
+  refresh-token-expiration-millis: 3000000
+  access-token-expiration-millis: 60000
+
+
+
+
+
+

@@ -5,6 +5,7 @@ import gw.apiserver.common.security.access.CustomAuthenticationEntryPoint;
 import gw.apiserver.common.security.access.CustomAuthenticationFailureHandler;
 import gw.apiserver.common.security.access.CustomAuthenticationSuccessHandler;
 import gw.apiserver.common.security.core.JwtTokenProvider;
+import gw.apiserver.common.security.core.encoder.ShaEncoder;
 import gw.apiserver.common.security.core.userdetails.service.CustomUserDetailsService;
 import gw.apiserver.common.security.filter.JwtAuthenticationFilter;
 import gw.apiserver.common.security.filter.JwtVerificationFilter;
@@ -47,8 +48,9 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-        return new MessageDigestPasswordEncoder("SHA-256");
+//        return new BCryptPasswordEncoder();                 -> 스프링에서 권장하고 있음 sha256 보다 안전 하다
+//        return new MessageDigestPasswordEncoder("SHA-256"); -> 한국 인터넷 진흥원에서 권장함
+        return new ShaEncoder();                           // -> dpubad에 이렇게 되어있음.. 추후 위에 두가지중 하나로 변경 필요함
     }
 
     @Bean
@@ -135,7 +137,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenProvider, passwordEncoder());
 
             jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());

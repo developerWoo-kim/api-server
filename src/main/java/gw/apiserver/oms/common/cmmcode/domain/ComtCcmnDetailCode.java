@@ -23,6 +23,6 @@ public class ComtCcmnDetailCode {
     private LocalDateTime frstRegistPnttm;
     private LocalDateTime frstRegisterId;
     private LocalDateTime lastUpdtPnttm;
-    private LocalDateTime lastUpduserId;
+    private LocalDateTime lastUpdusrId;
     private int sort;
 }

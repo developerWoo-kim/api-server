@@ -4,13 +4,16 @@ import gw.apiserver.oms.common.cmmcode.domain.BankCd;
 import gw.apiserver.oms.common.cmmcode.domain.MainDrivergnCd;
 import gw.apiserver.oms.common.cmmcode.domain.VhclLoadweightCd;
 import gw.apiserver.oms.common.cmmcode.domain.VhclTypeCd;
+import gw.apiserver.oms.user.controller.form.UserJoinForm;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * 회원 관리
@@ -51,8 +54,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private VhclTypeCd vhclTypeCd;                  // 차량 종류 코드
 
-    @Enumerated(EnumType.STRING)
-    private MainDrivergnCd mainDrivergnCd;          // 주 운행지역 코드
+    private String mainDrivergnCd;          // 주 운행지역 코드
 
     private String avrDriveBgnghr;                  // 평균 운행 시작시간
     private String avrDriveEndhr;                   // 평균 운행 종료시간
@@ -78,10 +80,10 @@ public class User {
     private String profileAtchfileSn;               // 프로필 첨부파일 일련번호
 
     @Builder
-    public User(String userSn, String userId, String userName, String pswd, String eml, String bzmnNm, String bzmnNo, String telno, String fxno, String zip, String addr, String daddr, BankCd bankCd, String dpstrNm, String actno, String vhclNo, VhclLoadweightCd vhclLoadweightCd, VhclTypeCd vhclTypeCd, MainDrivergnCd mainDrivergnCd, String avrDriveBgnghr, String avrDriveEndhr, String leftAtchfileSn, String rightAtchfileSn, String backAtchfileSn, String pnlAtchfileSn, String bzmnrgstrAtchfileSn, String vhclRgstrAtchfileSn, String idcardAtchfileSn, String frghtCrtfcAtchfileSn, String tmprPswdYn, String rgtr, LocalDateTime regDt, String delYn, LocalDateTime whdwlDt, String mbrMdfcnYn, LocalDateTime mbrMdfcnDt, String aprvYn, String blackmbrYn, String mdfcnIdntyYn, String memo, String profileAtchfileSn) {
+    public User(String userSn, String userId, String userNm, String pswd, String eml, String bzmnNm, String bzmnNo, String telno, String fxno, String zip, String addr, String daddr, BankCd bankCd, String dpstrNm, String actno, String vhclNo, VhclLoadweightCd vhclLoadweightCd, VhclTypeCd vhclTypeCd, String mainDrivergnCd, String avrDriveBgnghr, String avrDriveEndhr, String leftAtchfileSn, String rightAtchfileSn, String backAtchfileSn, String pnlAtchfileSn, String bzmnrgstrAtchfileSn, String vhclRgstrAtchfileSn, String idcardAtchfileSn, String frghtCrtfcAtchfileSn, String tmprPswdYn, String rgtr, LocalDateTime regDt, String delYn, LocalDateTime whdwlDt, String mbrMdfcnYn, LocalDateTime mbrMdfcnDt, String aprvYn, String blackmbrYn, String mdfcnIdntyYn, String memo, String profileAtchfileSn) {
         this.userSn = userSn;
         this.userId = userId;
-        this.userNm = userName;
+        this.userNm = userNm;
         this.pswd = pswd;
         this.eml = eml;
         this.bzmnNm = bzmnNm;
@@ -120,5 +122,27 @@ public class User {
         this.mdfcnIdntyYn = mdfcnIdntyYn;
         this.memo = memo;
         this.profileAtchfileSn = profileAtchfileSn;
+    }
+
+    //== 생성 메서드 ==//
+    /**
+     * 회원 가입
+     * @param form UserJoinForm
+     * @param userSn String
+     * @return User
+     */
+    public static User createUser(UserJoinForm form, String userSn) {
+        return new User().builder()
+                .userSn(userSn)
+                .userId(form.getUserId())
+                .userNm(form.getUserNm())
+                .pswd(form.getPswd())
+                .bzmnNm(form.getBzmnNm())
+                .bzmnNo(form.getBzmnNo())
+                .vhclNo(form.getVhclNo())
+                .vhclLoadweightCd(form.getVhclLoadweightCd())
+                .vhclTypeCd(form.getVhclTypeCd())
+                .mainDrivergnCd(form.getMainDrivergnCd())
+                .build();
     }
 }
