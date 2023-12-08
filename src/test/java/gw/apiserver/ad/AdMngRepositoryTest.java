@@ -6,8 +6,10 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.domain.AdConditi;
 
+import gw.apiserver.oms.ad.domain.AdMng;
 import gw.apiserver.oms.ad.domain.QAdConditi;
 import gw.apiserver.oms.ad.domain.QAdMng;
+import gw.apiserver.oms.ad.repository.AdMngRepository;
 import gw.apiserver.oms.common.cmmcode.domain.QComtCcmnDetailCode;
 import gw.apiserver.oms.user.domain.QUser;
 import org.assertj.core.api.Assertions;
@@ -22,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static gw.apiserver.oms.ad.domain.QAdConditi.adConditi;
@@ -35,6 +38,9 @@ import static gw.apiserver.oms.user.domain.QUser.user;
 public class AdMngRepositoryTest {
     @Autowired
     JPAQueryFactory queryFactory;
+
+    @Autowired
+    AdMngRepository adMngRepository;
 
     @Test
     @DisplayName("광고 페이징 리스트 조회")
@@ -78,7 +84,7 @@ public class AdMngRepositoryTest {
                 )
                 .from(comtCcmnDetailCode)
                 .leftJoin(adConditi)
-                .on(comtCcmnDetailCode.code.eq(adConditi.vhclLoadweightCd)
+                .on(comtCcmnDetailCode.code.eq(adConditi.vhclLoadweightCd.toString())
                         , adConditi.adConditiId.adSn.eq(adSn))
                 .where(comtCcmnDetailCode.codeId.eq("MNG001"))
                 .groupBy(comtCcmnDetailCode.code)
@@ -116,4 +122,20 @@ public class AdMngRepositoryTest {
 
         Assertions.assertThat(count).isEqualTo(2);
     }
+
+    @Test
+    @DisplayName("응모 기간 검증 : 신청 일자가 응모 종료 날짜보다 적은지")
+    public void adApplyEndDtCheckTest() {
+        AdMng ad = adMngRepository.findById("AD_0000012").orElseThrow();
+        LocalDate aplctBgngYmd = ad.getAplctBgngYmd();
+        LocalDate aplctEndYmd = ad.getAplctEndYmd();
+        LocalDate localDate = LocalDate.of(2023, 07, 1);
+
+        Assertions.assertThat(isWithinDateRange(localDate, aplctBgngYmd, aplctEndYmd)).isTrue();
+    }
+
+    private static boolean isWithinDateRange(LocalDate date, LocalDate startDate, LocalDate endDate) {
+        return !date.isBefore(startDate) && !date.isAfter(endDate);
+    }
+
 }

@@ -36,7 +36,7 @@ public class UserServiceTest {
         form.setVhclNo("346거1521");
         form.setVhclLoadweightCd(VhclLoadweightCd.MNG001002);
         form.setVhclTypeCd(VhclTypeCd.MNG002002);
-        form.setMainDrivergnCd(MainDrivergnCd.USR002001);
+        form.setMainDrivergnCd("USR002001, USR002002");
 
         ResponseEntity<CommonResponse> resp = userService.joinUser(form);
 
