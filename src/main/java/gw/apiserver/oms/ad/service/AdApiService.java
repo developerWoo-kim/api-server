@@ -17,4 +17,11 @@ public interface AdApiService {
      * @return Page<AdListDto>
      */
     Page<AdListDto> searchAdPagingList(SearchCondition condition, Pageable pageable);
+
+    /**
+     * 광고 응모
+     * @param adSn String 광고 일련번호
+     * @param userId String 회원 아이디
+     */
+    void applyAd(String adSn, String userId);
 }

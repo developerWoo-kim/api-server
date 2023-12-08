@@ -22,10 +22,9 @@ public class JwtResponseUtil {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         CommonErrorResponse commonErrorResponse = CommonErrorResponse.commonError(
-                HttpStatus.UNAUTHORIZED.toString(),
-                request.getRequestURI(),
                 jwtExceptionCode.getErrorCode(),
-                jwtExceptionCode.getMessage()
+                jwtExceptionCode.getMessage(),
+                request.getRequestURI()
         );
 
         response.getWriter()

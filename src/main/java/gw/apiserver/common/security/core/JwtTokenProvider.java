@@ -149,6 +149,17 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
+    /**
+     * 토큰에 있는 회원 아이디 반환
+     * @param req HttpServletRequest
+     * @return String
+     */
+    public String getUserId(HttpServletRequest req) {
+        String accessToken = resolveAccessToken(req);
+        Claims claims = parseClaims(accessToken);
+        return claims.get("memberId").toString();
+    }
+
     public void setAccessTokenHeader(String accessToken, HttpServletResponse response) {
         String headerValue = BEARER_PREFIX + accessToken;
         response.setHeader(AUTHORIZATION_HEADER, headerValue);

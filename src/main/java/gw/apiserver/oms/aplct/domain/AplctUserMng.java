@@ -74,15 +74,22 @@ public class AplctUserMng {
         this.rappUserSn = rappUserSn;
     }
 
-//    @Builder
-//    public AplctUserMng(String aplctSn,AdMng adMng, User user, AdPrgrsSttsCd adPrgrsSttsCd, String rappYn, Integer rappPnlKm, LocalDateTime aplctRegDt, LocalDateTime rappRegDt) {
-//        this.aplctSn = aplctSn;
-//        this.adMng = adMng;
-//        this.user = user;
-//        this.adPrgrsSttscd = adPrgrsSttsCd;
-//        this.rappYn = rappYn;
-//        this.rappPnlKm = rappPnlKm;
-//        this.aplctRegDt = aplctRegDt;
-//        this.rappRegDt = rappRegDt;
-//    }
+    //== 생성 메서드 ==//
+
+    /**
+     * 응모 생성 메서드
+     * @param aplctSn String 시퀀스
+     * @param admng AdMng 광고
+     * @param user User 회원
+     * @return AplctUserMng
+     */
+    public static AplctUserMng createAplctUser(String aplctSn, AdMng admng, User user) {
+        AplctUserMng aplctUser = new AplctUserMng();
+        aplctUser.setAplctSn(aplctSn);
+        aplctUser.setAdMng(admng);
+        aplctUser.setUser(user);
+        aplctUser.setAdPrgrsSttscd(AdPrgrsSttsCd.MNG004001);
+
+        return aplctUser;
+    }
 }

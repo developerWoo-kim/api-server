@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.*;
+import static gw.apiserver.common.utils.reponse.code.CommonError.*;
 
 @Getter
 public enum AuthenticationExceptionTypes {

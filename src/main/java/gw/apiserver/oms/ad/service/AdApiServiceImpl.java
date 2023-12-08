@@ -1,19 +1,37 @@
 package gw.apiserver.oms.ad.service;
 
 import gw.apiserver.common.paging.SearchCondition;
+import gw.apiserver.common.utils.reponse.code.CommonError;
+import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
+import gw.apiserver.oms.ad.domain.AdMng;
 import gw.apiserver.oms.ad.repository.AdMngRepository;
+import gw.apiserver.oms.aplct.domain.AplctUserMng;
+import gw.apiserver.oms.aplct.repository.AplctUserMngRepository;
+import gw.apiserver.oms.aplct.service.AplctUserMngService;
+import gw.apiserver.oms.common.cmmseq.service.ComtecopseqService;
+import gw.apiserver.oms.user.domain.User;
+import gw.apiserver.oms.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import static gw.apiserver.common.utils.date.CommonDateUtil.*;
+
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdApiServiceImpl implements AdApiService {
+    private final AplctUserMngRepository aplctUserMngRepository;
     private final AdMngRepository adMngRepository;
+    private final UserRepository userRepository;
+    private final AplctUserMngService aplctUserMngService;
+    private final ComtecopseqService comtecopseqService;
 
     @Override
     public Page<AdListDto> searchAdPagingList(SearchCondition condition, Pageable pageable) {
@@ -35,6 +53,32 @@ public class AdApiServiceImpl implements AdApiService {
         }
 
         return adPageList;
+    }
+
+    @Override
+    @Transactional
+    public void applyAd(String adSn, String userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("회원 정보가 존재하지 않습니다."));  // 회원정보 조회
+        AdMng adMng = adMngRepository.findById(adSn).orElseThrow(
+                () -> new IllegalArgumentException("광고가 존재하지 않습니다."));
+        // 광고 응모 중복 체크
+        if(aplctUserMngService.applyDuplicationCheck(adSn, user.getUserSn()))
+            throw new GlobalApiException(CommonError.AD_APPLY_DUPLICATION);
+        // 응모 기간 검증
+        if(!isWithinDateRange(LocalDate.now(), adMng.getAplctBgngYmd(), adMng.getAplctEndYmd()))
+            throw new GlobalApiException(CommonError.AD_NO_APPLY_PERIOD);
+        // 이미 진행중인 광고가 있는지 체크
+        if(aplctUserMngService.anyCurrentlyAdRunningCheck(user.getUserSn()))
+            throw new GlobalApiException(CommonError.AD_ALREADY_EXISTS_RUNNING);
+        // 응모조건에 해당하는지
+        if(adMngRepository.findAdConditi(adSn).stream()
+                .noneMatch(adConditi -> adConditi.getVhclLoadweightCd().equals(user.getVhclLoadweightCd())))
+            throw new GlobalApiException(CommonError.AD_NOT_MATCH_CONDITION);
+
+
+        AplctUserMng aplctUser = AplctUserMng.createAplctUser(comtecopseqService.generateUUID_APL(), adMng, user);
+        aplctUserMngRepository.save(aplctUser);
     }
 
 }

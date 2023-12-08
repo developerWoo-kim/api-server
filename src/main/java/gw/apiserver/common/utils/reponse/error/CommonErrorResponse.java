@@ -4,6 +4,7 @@ package gw.apiserver.common.utils.reponse.error;
 import gw.apiserver.common.utils.reponse.meta.AbstractCommonResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,18 +17,19 @@ import lombok.Setter;
  */
 @Schema(description = "에러 응답")
 @Getter @Setter
-@AllArgsConstructor
-public class CommonErrorResponse extends AbstractCommonResponse {
+@Builder
+public class CommonErrorResponse {
     private String code;
+    private String message;
     private String path;
-    public CommonErrorResponse(String status, String requestUrl, String code, String message) {
-        this.setStatus(status);
-        this.setPath(requestUrl);
+
+    public CommonErrorResponse(String code, String message, String requestUrl) {
         this.setCode(code);
         this.setMessage(message);
+        this.setPath(requestUrl);
     }
 
-    public static CommonErrorResponse commonError(String status, String requestUrl, String errorCode, String message) {
-        return new CommonErrorResponse(status, requestUrl, errorCode, message);
+    public static CommonErrorResponse commonError(String errorCode, String message, String requestUrl) {
+        return new CommonErrorResponse(errorCode, message, requestUrl);
     };
 }

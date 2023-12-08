@@ -1,33 +1,21 @@
 package gw.apiserver.common.security.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gw.apiserver.common.security.core.userdetails.CustomUserDetails;
 import gw.apiserver.common.security.core.JwtTokenProvider;
 import gw.apiserver.common.security.exception.JwtTokenExceptionTypes;
 import gw.apiserver.common.security.exception.custom.AccessTokenNotFound;
-import gw.apiserver.common.utils.reponse.code.CommonErrorCode;
 import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
-import gw.apiserver.common.utils.reponse.utils.CommonErrorResponseUtil;
-import io.jsonwebtoken.Claims;
+import gw.apiserver.common.utils.reponse.util.CommonErrorResponseUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
-import static gw.apiserver.common.utils.reponse.code.CommonErrorCode.CMM_AUTH_ACCESS_TOKEN_NOT_FOUND;
 
 
 /**
@@ -84,10 +72,9 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
         } catch (JwtException | AccessTokenNotFound e) {
             JwtTokenExceptionTypes jwtTokenExceptionTypes = JwtTokenExceptionTypes.findOf(e.getClass().getSimpleName());
             CommonErrorResponse errorResponse = CommonErrorResponse.commonError(
-                    HttpStatus.UNAUTHORIZED.toString(),
-                    request.getRequestURI(),
                     jwtTokenExceptionTypes.getCode(),
-                    jwtTokenExceptionTypes.getMessage()
+                    jwtTokenExceptionTypes.getMessage(),
+                    request.getRequestURI()
             );
             CommonErrorResponseUtil.sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED, errorResponse);
         }

@@ -1,15 +1,12 @@
-package gw.apiserver.common.utils.reponse.utils;
+package gw.apiserver.common.utils.reponse.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gw.apiserver.common.security.core.response.JwtExceptionCode;
 import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 

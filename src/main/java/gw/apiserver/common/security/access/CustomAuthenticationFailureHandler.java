@@ -31,10 +31,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 
         ObjectMapper om = new ObjectMapper();
         CommonErrorResponse commonErrorResponse = CommonErrorResponse.commonError(
-                HttpStatus.UNAUTHORIZED.toString(),
-                request.getRequestURI(),
                 exceptionTypes.getCode(),
-                exceptionTypes.getMessage()
+                exceptionTypes.getMessage(),
+                request.getRequestURI()
         );
 
         response.setCharacterEncoding("utf-8");
