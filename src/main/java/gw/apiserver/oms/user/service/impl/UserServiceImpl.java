@@ -4,8 +4,8 @@ import gw.apiserver.common.utils.reponse.code.CommonError;
 import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
 import gw.apiserver.oms.cfm.service.CommonFileService;
-import gw.apiserver.oms.common.cmmcode.domain.MainDrivergnCd;
 import gw.apiserver.oms.common.cmmseq.service.ComtecopseqService;
+import gw.apiserver.oms.user.controller.form.UserFileInsertForm;
 import gw.apiserver.oms.user.controller.form.UserJoinForm;
 import gw.apiserver.oms.user.controller.form.UserUpdateForm;
 import gw.apiserver.oms.user.domain.User;
@@ -91,13 +91,78 @@ public class UserServiceImpl implements UserService {
         user.setDpstrNm(form.getDpstrNm());
         user.setMainDrivergnCd(User.conversionMainDriverCd(form.getMainDrivergnCd()));
 
-        if(!form.getLeftImg().isEmpty()) {
+    }
+
+    @Override
+    @Transactional
+    public void updateUserFile(UserFileInsertForm form) {
+        User user = userRepository.findById(form.getUserSn()).orElseThrow();
+        // 차량 좌측 사진
+        if(form.getLeftImg() != null && !form.getLeftImg().isEmpty()) {
             if(user.getLeftAtchfileSn() != null) {
                 commonFileService.deleteSubFileOfMasterFile(user.getLeftAtchfileSn());
                 commonFileService.update(user.getLeftAtchfileSn(), "user", form.getLeftImg());
             } else {
-                commonFileService.save("user", form.getLeftImg());
+                String atchFileId = commonFileService.save("user", form.getLeftImg());
+                user.setLeftAtchfileSn(atchFileId);
             }
         }
+
+        // 차량 우측 사진
+        if(form.getRightImg() != null && !form.getRightImg().isEmpty()) {
+            if(user.getRightAtchfileSn() != null) {
+                commonFileService.deleteSubFileOfMasterFile(user.getRightAtchfileSn());
+                commonFileService.update(user.getRightAtchfileSn(), "user", form.getRightImg());
+            } else {
+                String atchFileId = commonFileService.save("user", form.getRightImg());
+                user.setRightAtchfileSn(atchFileId);
+            }
+        }
+
+        // 차량 후방 사진
+        if(form.getBackImg() != null && !form.getBackImg().isEmpty()) {
+            if(user.getBackAtchfileSn() != null) {
+                commonFileService.deleteSubFileOfMasterFile(user.getBackAtchfileSn());
+                commonFileService.update(user.getBackAtchfileSn(), "user", form.getBackImg());
+            } else {
+                String atchFileId = commonFileService.save("user", form.getBackImg());
+                user.setBackAtchfileSn(atchFileId);
+            }
+        }
+
+        // 계기판 사진
+        if(form.getDashBoardImg() != null && !form.getDashBoardImg().isEmpty()) {
+            if(user.getPnlAtchfileSn() != null) {
+                commonFileService.deleteSubFileOfMasterFile(user.getPnlAtchfileSn());
+                commonFileService.update(user.getPnlAtchfileSn(), "user", form.getDashBoardImg());
+            } else {
+                String atchFileId = commonFileService.save("user", form.getDashBoardImg());
+                user.setPnlAtchfileSn(atchFileId);
+            }
+        }
+
+        // 차량 등록증 사진
+        if(form.getCrcImg() != null && !form.getCrcImg().isEmpty()) {
+            if(user.getVhclRgstrAtchfileSn() != null) {
+                commonFileService.deleteSubFileOfMasterFile(user.getVhclRgstrAtchfileSn());
+                commonFileService.update(user.getVhclRgstrAtchfileSn(), "user", form.getCrcImg());
+            } else {
+                String atchFileId = commonFileService.save("user", form.getCrcImg());
+                user.setVhclRgstrAtchfileSn(atchFileId);
+            }
+        }
+
+        // 신분증 사진
+        if(form.getIdCardImg() != null && !form.getIdCardImg().isEmpty()) {
+            if(user.getIdcardAtchfileSn() != null) {
+                commonFileService.deleteSubFileOfMasterFile(user.getIdcardAtchfileSn());
+                commonFileService.update(user.getIdcardAtchfileSn(), "user", form.getIdCardImg());
+            } else {
+                String atchFileId = commonFileService.save("user", form.getIdCardImg());
+                user.setIdcardAtchfileSn(atchFileId);
+            }
+        }
+
+
     }
 }

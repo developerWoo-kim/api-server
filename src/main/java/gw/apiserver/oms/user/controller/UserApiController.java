@@ -3,6 +3,7 @@ package gw.apiserver.oms.user.controller;
 import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
 import gw.apiserver.common.utils.reponse.util.CommonResponseUtil;
+import gw.apiserver.oms.user.controller.form.UserFileInsertForm;
 import gw.apiserver.oms.user.controller.form.UserJoinForm;
 import gw.apiserver.oms.user.controller.form.UserUpdateForm;
 import gw.apiserver.oms.user.service.UserService;
@@ -87,5 +88,27 @@ public class UserApiController {
     public ResponseEntity<CommonResponse> updateUser(@RequestBody @Valid UserUpdateForm form) {
         userService.updateUser(form);
         return CommonResponseUtil.responseInternal(HttpStatus.OK, "수정되었습니다.");
+    }
+
+    @Operation(
+            summary = "회원 첨부파일 정보 수정",
+            description = "회원 첨부파일 정보 수정",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "수정 완료"),
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "authorization",
+                    value = "Access Token",
+                    required = true,
+                    dataType = "string",
+                    paramType = "header"
+            )
+    })
+    @PutMapping("/api/v1/user/file")
+    public ResponseEntity<CommonResponse> updateUserFile(UserFileInsertForm form) {
+        userService.updateUserFile(form);
+        return CommonResponseUtil.responseInternal(HttpStatus.OK, "");
     }
 }

@@ -10,8 +10,9 @@ public interface CommonFileService {
      * 파일 저장
      * @param category String 카일 카테고리
      * @param file MultipartFile... 파일 가변
+     * @return String 마스터 파일 아이디
      */
-    void save(String category, MultipartFile... file);
+    String save(String category, MultipartFile file);
 
     /**
      * 파일 업데이트

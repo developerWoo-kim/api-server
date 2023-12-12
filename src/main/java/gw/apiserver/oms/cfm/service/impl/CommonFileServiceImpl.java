@@ -31,30 +31,30 @@ public class CommonFileServiceImpl implements CommonFileService {
     private final CommonFileDetailRepository commonFileDetailRepository;
 
     /**
-     * 파일 저장
+     * 단일 파일 저장
      * @param category String 파일 카테고리
      * @param file MultipartFile... 파일 가변 인자
+     * @return String 마스터 파일 아이디
      */
     @Override
-    public void save(String category, MultipartFile... file) {
+    public String save(String category, MultipartFile file) {
         List<CommonFileDetail> commonFileDetailList = new ArrayList<>();
-        for (MultipartFile multipartFile : file) {
-            // 상세 파일 생성
-            CommonFileDetail commonFile = CommonFileDetail.createCommonFileDetail(
-                            comtecopseqService.generateUUID_FLED(),
-                            commonGlobalsConfigValue.getFileStorePath(),
-                            category,
-                            multipartFile
-                    );
+        // 상세 파일 생성
+        CommonFileDetail commonFile = CommonFileDetail
+                .createCommonFileDetail(
+                    comtecopseqService.generateUUID_FLED(),
+                    commonGlobalsConfigValue.getFileStorePath(),
+                    category,
+                    file
+                );
 
-            // 파일 확장자 체크
-            if(!CommonFileUtil.checkFileExtension(commonFile.getFileExtsn())) {
-                throw new GlobalApiException(CommonError.CFM_FILE_NOT_ALLOWED);
-            }
-            // 파일 저장 (to Disk)
-            CommonFileUtil.saveFile(commonFile.getFileStreCours(), commonFile.getStreFileNm(), multipartFile);
-            commonFileDetailList.add(commonFile);
+        // 파일 확장자 체크
+        if(!CommonFileUtil.checkFileExtension(commonFile.getFileExtsn())) {
+            throw new GlobalApiException(CommonError.CFM_FILE_NOT_ALLOWED);
         }
+        // 파일 저장 (to Disk)
+        CommonFileUtil.saveFile(commonFile.getFileStreCours(), commonFile.getStreFileNm(), file);
+        commonFileDetailList.add(commonFile);
 
         // 마스터 파일 엔티티 생성
         CommonFileMaster commonMasterFile = CommonFileMaster.createCommonMasterFile(
@@ -62,7 +62,10 @@ public class CommonFileServiceImpl implements CommonFileService {
                 commonFileDetailList.toArray(new CommonFileDetail[0])
         );
 
-        commonFileMasterRepository.save(commonMasterFile);
+        CommonFileMaster saveFileMaster = commonFileMasterRepository.save(commonMasterFile);
+
+
+        return saveFileMaster.getAtchFileId();
     }
 
     @Override

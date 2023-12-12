@@ -1,6 +1,7 @@
 package gw.apiserver.oms.user.service;
 
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
+import gw.apiserver.oms.user.controller.form.UserFileInsertForm;
 import gw.apiserver.oms.user.controller.form.UserJoinForm;
 import gw.apiserver.oms.user.controller.form.UserUpdateForm;
 import org.springframework.http.ResponseEntity;
@@ -25,4 +26,10 @@ public interface UserService {
      * @param form UserUpdateForm
      */
     void updateUser(UserUpdateForm form);
+
+    /**
+     * 회원관련 파일 업데이트
+     * @param form UserFileInsertForm
+     */
+    void updateUserFile(UserFileInsertForm form);
 }

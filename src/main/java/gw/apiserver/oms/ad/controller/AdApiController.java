@@ -8,6 +8,7 @@ import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.service.AdApiService;
+import gw.apiserver.oms.user.controller.form.UserUpdateForm;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -91,8 +92,8 @@ public class AdApiController {
 
 
     @PostMapping("/api/fileTest")
-    public ResponseEntity<CommonResponse> fileTest(@RequestParam("image") MultipartFile file) {
-        System.out.println(file.getName());
+    public ResponseEntity<CommonResponse> fileTest(UserUpdateForm form) {
+        System.out.println(form.getUserSn());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(CommonResponse.createResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "서버 오류"));
