@@ -1,12 +1,12 @@
 package gw.apiserver.common.utils.reponse.meta;
 
-import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class CommonResponse extends AbstractCommonResponse {
-
+public class CommonResponse {
+    private String status;
+    private String message;
     public CommonResponse(String status, String message) {
         this.setStatus(status);
         this.setMessage(message);

@@ -34,6 +34,7 @@ public class User {
     private String userNm;                        // 사용자명
     private String pswd;                            // 비밀번호
     private String eml;                             // 이메일
+    private String rprsvNm;                         // 대표자명
     private String bzmnNm;                          // 사업자명
     private String bzmnNo;                          // 사업자 번호
     private String telno;                           // 전화번호
@@ -142,7 +143,32 @@ public class User {
                 .vhclNo(form.getVhclNo())
                 .vhclLoadweightCd(form.getVhclLoadweightCd())
                 .vhclTypeCd(form.getVhclTypeCd())
-                .mainDrivergnCd(form.getMainDrivergnCd())
+                .mainDrivergnCd(conversionMainDriverCd(form.getMainDrivergnCd()))
                 .build();
+    }
+
+    //== 편의 메서드 ==//
+
+    /**
+     * 주 운행지역 문자열 콤마 기준으로 코드 문자열 변환
+     * 수도권,충청권 -> USR002001,USR002002
+     *
+     * @param MainDriverCdStr String
+     * @return String
+     */
+    public static String conversionMainDriverCd(String MainDriverCdStr) {
+        String[] cdStrArr = MainDriverCdStr.split(",");
+        String mainDriverCd = "";
+        for (int i = 0; i < cdStrArr.length; i++) {
+            MainDrivergnCd byCodeNm = MainDrivergnCd.getByCodeNm(cdStrArr[i]);
+
+            mainDriverCd += byCodeNm.getCode();
+
+            if(i < cdStrArr.length-1) {
+                mainDriverCd += ",";
+            }
+        }
+
+        return mainDriverCd;
     }
 }

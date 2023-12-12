@@ -1,7 +1,7 @@
 package gw.apiserver.common.utils.reponse.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
+import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;

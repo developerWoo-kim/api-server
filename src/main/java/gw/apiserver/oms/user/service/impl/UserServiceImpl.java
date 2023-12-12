@@ -1,9 +1,13 @@
 package gw.apiserver.oms.user.service.impl;
 
+import gw.apiserver.common.utils.reponse.code.CommonError;
+import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
+import gw.apiserver.oms.cfm.service.CommonFileService;
 import gw.apiserver.oms.common.cmmcode.domain.MainDrivergnCd;
 import gw.apiserver.oms.common.cmmseq.service.ComtecopseqService;
 import gw.apiserver.oms.user.controller.form.UserJoinForm;
+import gw.apiserver.oms.user.controller.form.UserUpdateForm;
 import gw.apiserver.oms.user.domain.User;
 import gw.apiserver.oms.user.repository.UserRepository;
 import gw.apiserver.oms.user.service.UserService;
@@ -13,16 +17,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ComtecopseqService comtecopseqService;
     private final PasswordEncoder passwordEncoder;
+
+    private final CommonFileService commonFileService;
 
     @Override
     public ResponseEntity<CommonResponse> idDuplicationCheck(String id) {
@@ -49,24 +57,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<CommonResponse> joinUser(UserJoinForm form) {
         try {
             form.setPswd(passwordEncoder.encode(form.getPswd())); // 비밀번호 암호화
-
-            String[] cdStrArr = form.getMainDrivergnCd().split(",");
-
-            String mainDriverCd = "";
-            for (int i = 0; i < cdStrArr.length; i++) {
-                MainDrivergnCd byCodeNm = MainDrivergnCd.getByCodeNm(cdStrArr[i]);
-
-                mainDriverCd += byCodeNm.getCodeNm();
-
-                if(i < cdStrArr.length-1) {
-                    mainDriverCd += ",";
-                }
-            }
-
-            form.setMainDrivergnCd(mainDriverCd);
 
             User user = User.createUser(form, comtecopseqService.generateUUID_USR());
 
@@ -79,5 +73,31 @@ public class UserServiceImpl implements UserService {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponse.createResponse(HttpStatus.OK.toString(), "회원가입이 완료되었습니다."));
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(UserUpdateForm form) {
+        User user = userRepository.findById(form.getUserSn()).orElseThrow(() ->
+                new GlobalApiException(CommonError.USER_NOT_FOUND));
+
+        user.setPswd(passwordEncoder.encode(form.getPswd()));
+        user.setBzmnNm(form.getBzmnNm());
+        user.setRprsvNm(form.getRprsvNm());
+        user.setTelno(form.getTelno());
+        user.setZip(form.getZip());
+        user.setAddr(form.getAddr());
+        user.setDaddr(form.getDaddr());
+        user.setDpstrNm(form.getDpstrNm());
+        user.setMainDrivergnCd(User.conversionMainDriverCd(form.getMainDrivergnCd()));
+
+        if(!form.getLeftImg().isEmpty()) {
+            if(user.getLeftAtchfileSn() != null) {
+                commonFileService.deleteSubFileOfMasterFile(user.getLeftAtchfileSn());
+                commonFileService.update(user.getLeftAtchfileSn(), "user", form.getLeftImg());
+            } else {
+                commonFileService.save("user", form.getLeftImg());
+            }
+        }
     }
 }

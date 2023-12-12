@@ -3,7 +3,7 @@ package gw.apiserver.common.security.filter;
 import gw.apiserver.common.security.core.JwtTokenProvider;
 import gw.apiserver.common.security.exception.JwtTokenExceptionTypes;
 import gw.apiserver.common.security.exception.custom.AccessTokenNotFound;
-import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
+import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import gw.apiserver.common.utils.reponse.util.CommonErrorResponseUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
@@ -71,11 +71,11 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
             }
         } catch (JwtException | AccessTokenNotFound e) {
             JwtTokenExceptionTypes jwtTokenExceptionTypes = JwtTokenExceptionTypes.findOf(e.getClass().getSimpleName());
-            CommonErrorResponse errorResponse = CommonErrorResponse.commonError(
-                    jwtTokenExceptionTypes.getCode(),
-                    jwtTokenExceptionTypes.getMessage(),
-                    request.getRequestURI()
-            );
+            CommonErrorResponse errorResponse = CommonErrorResponse.builder()
+                    .code(jwtTokenExceptionTypes.getCode())
+                    .message(jwtTokenExceptionTypes.getMessage())
+                    .path(request.getRequestURI())
+                    .build();
             CommonErrorResponseUtil.sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED, errorResponse);
         }
     }

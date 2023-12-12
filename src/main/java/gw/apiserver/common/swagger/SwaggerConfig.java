@@ -2,12 +2,16 @@ package gw.apiserver.common.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 // 스프링 부트를 사용하는 경우 @Configuration만, Spring이면 @EnableSwagger2도 필요
@@ -16,7 +20,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
@@ -28,7 +32,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Adruck Api 가이드")
                 .description("2023-11-28 작업 중")
-                .version("1.0")
+                .version("3.0")
                 .build();
     }
 }

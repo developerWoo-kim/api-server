@@ -2,7 +2,7 @@ package gw.apiserver.common.security.access;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gw.apiserver.common.security.exception.AuthenticationExceptionTypes;
-import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
+import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,11 +30,12 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         AuthenticationExceptionTypes exceptionTypes = AuthenticationExceptionTypes.findOf(exception.getClass().getSimpleName());
 
         ObjectMapper om = new ObjectMapper();
-        CommonErrorResponse commonErrorResponse = CommonErrorResponse.commonError(
-                exceptionTypes.getCode(),
-                exceptionTypes.getMessage(),
-                request.getRequestURI()
-        );
+
+        CommonErrorResponse commonErrorResponse = CommonErrorResponse.builder()
+                .code(exceptionTypes.getCode())
+                .message(exceptionTypes.getMessage())
+                .path(request.getRequestURI())
+                .build();
 
         response.setCharacterEncoding("utf-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

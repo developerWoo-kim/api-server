@@ -82,4 +82,5 @@ public class AdMngCustomRepositoryImpl implements AdMngCustomRepository {
                 .fetch();
     }
 
+
 }

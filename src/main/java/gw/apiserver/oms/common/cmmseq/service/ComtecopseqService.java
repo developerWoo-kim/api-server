@@ -120,4 +120,46 @@ public class ComtecopseqService {
 
         return prefix + formattedId;
     }
+
+    /**
+     * 파일 시퀀스
+     *
+     * @return String
+     */
+    @Transactional
+    public String generateUUID_FLE() {
+        String tableName = "FLE_ID"; // SEQ 참조 값
+        String prefix = "FLE_";      // UUID 앞에 고정적으로 붙이고자 하는 설정 값 지정
+        int cipers = 16;             // prefix를 제외한 아이디의 길이 지정
+
+        // 시퀀스 테이블 조회하여 증감시킨 후 포맷 생성
+        Comtecopseq comtecopseq = comtecopseqRepository.findByTableName(tableName);
+
+        String formattedId = String.format("%0" + cipers + "d", comtecopseq.getNextId());
+
+        comtecopseq.incrementId();
+
+        return prefix + formattedId;
+    }
+
+    /**
+     * 파일 상세 시퀀스
+     *
+     * @return String
+     */
+    @Transactional
+    public String generateUUID_FLED() {
+        String tableName = "FLED_ID"; // SEQ 참조 값
+        String prefix = "FLED_";      // UUID 앞에 고정적으로 붙이고자 하는 설정 값 지정
+        int cipers = 16;             // prefix를 제외한 아이디의 길이 지정
+
+        // 시퀀스 테이블 조회하여 증감시킨 후 포맷 생성
+        Comtecopseq comtecopseq = comtecopseqRepository.findByTableName(tableName);
+
+        String formattedId = String.format("%0" + cipers + "d", comtecopseq.getNextId());
+
+        comtecopseq.incrementId();
+
+        return prefix + formattedId;
+    }
 }

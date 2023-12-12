@@ -5,6 +5,9 @@ import gw.apiserver.oms.common.cmmcode.domain.MainDrivergnCd;
 import gw.apiserver.oms.common.cmmcode.domain.VhclLoadweightCd;
 import gw.apiserver.oms.common.cmmcode.domain.VhclTypeCd;
 import gw.apiserver.oms.user.controller.form.UserJoinForm;
+import gw.apiserver.oms.user.controller.form.UserUpdateForm;
+import gw.apiserver.oms.user.domain.User;
+import gw.apiserver.oms.user.repository.UserRepository;
 import gw.apiserver.oms.user.service.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest
@@ -21,6 +25,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class UserServiceTest {
     @Autowired
     UserService userService;
+    @Autowired
+    UserRepository userRepository;
 
     @Test
     @DisplayName("회원가입 테스트")
@@ -41,5 +47,16 @@ public class UserServiceTest {
         ResponseEntity<CommonResponse> resp = userService.joinUser(form);
 
         Assertions.assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @Rollback(value = false)
+    @DisplayName("회원정보 수정 테스트")
+    public void updateUserTest() {
+        UserUpdateForm form = new UserUpdateForm();
+        form.setUserSn("USR_00002311");
+        form.setPswd("1234");
+
+        userService.updateUser(form);
     }
 }

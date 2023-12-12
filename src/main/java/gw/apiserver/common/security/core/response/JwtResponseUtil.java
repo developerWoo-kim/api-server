@@ -1,9 +1,7 @@
 package gw.apiserver.common.security.core.response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gw.apiserver.common.security.exception.JwtTokenExceptionTypes;
-import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
-import io.jsonwebtoken.JwtException;
+import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +19,12 @@ public class JwtResponseUtil {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        CommonErrorResponse commonErrorResponse = CommonErrorResponse.commonError(
-                jwtExceptionCode.getErrorCode(),
-                jwtExceptionCode.getMessage(),
-                request.getRequestURI()
-        );
+        CommonErrorResponse commonErrorResponse = CommonErrorResponse.builder()
+                .code(jwtExceptionCode.getErrorCode())
+                .message(jwtExceptionCode.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
 
         response.getWriter()
                 .write(om.writeValueAsString(ResponseEntity

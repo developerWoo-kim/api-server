@@ -4,8 +4,7 @@ import gw.apiserver.common.paging.PagingDto;
 import gw.apiserver.common.paging.PagingForm;
 import gw.apiserver.common.paging.SearchCondition;
 import gw.apiserver.common.security.core.JwtTokenProvider;
-import gw.apiserver.common.utils.reponse.error.CommonErrorResponse;
-import gw.apiserver.common.utils.reponse.meta.AbstractCommonResponse;
+import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.service.AdApiService;
@@ -13,21 +12,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.http.HttpResponse;
-
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Api(tags = {"광고 API"})
 @Slf4j
@@ -69,8 +65,10 @@ public class AdApiController {
             responses = {
 
                     @ApiResponse(responseCode = "200", description = "응모 완료"),
-                    @ApiResponse(responseCode = "401", description = "Access Token 누락"),
-                    @ApiResponse(responseCode = "403", description = "Refresh Token 만료 or Refresh Token 인증 실패")
+                    @ApiResponse(responseCode = "401", description = "Access Token 누락", content = @Content(
+                            schema = @Schema(implementation = CommonErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "Refresh Token 만료 or Refresh Token 인증 실패", content = @Content(
+                            schema = @Schema(implementation = CommonErrorResponse.class))),
             }
     )
     @ApiImplicitParams({
@@ -83,7 +81,7 @@ public class AdApiController {
             )
     })
     @PostMapping("/api/v1/ad/apply/{adSn}")
-    public ResponseEntity<AbstractCommonResponse> apply(@PathVariable("adSn") String adSn, HttpServletRequest req) {
+    public ResponseEntity<CommonResponse> apply(@PathVariable("adSn") String adSn, HttpServletRequest req) {
         String userId = tokenProvider.getUserId(req);
         adApiService.applyAd(adSn, userId);
         return ResponseEntity.status(HttpStatus.OK).body(
