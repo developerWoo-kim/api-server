@@ -17,10 +17,10 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     private String roles;
 
-    public CustomUserDetails(User member) {
-        this.memberId = member.getUserId();
-        this.password = member.getPswd();
-        this.roles = "USER";
+    public CustomUserDetails(String memberId, String password, String roles) {
+        this.memberId = memberId;
+        this.password = password;
+        this.roles = roles;
     }
 
     public CustomUserDetails(String memberId, String roles) {

@@ -85,8 +85,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring().antMatchers(
                 "/members/signup",
                 "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/v3/api-docs",
-                "/auth/token", "/auth/reissue",
-                "/api/**"
+                "/auth/token", "/auth/reissue", "/error"
+//                "/api/**"
         );
     }
 
@@ -109,16 +109,19 @@ public class SecurityConfig {
                 .accessDeniedHandler(new CustomAccessDeniedHandler());          // 인가
 
         http
+                .authorizeRequests()
+                .anyRequest().access("@authorizationChecker.check(request, authentication)");
 
-                .authorizeRequests(authorize -> authorize
-                        .antMatchers("/api/v1/user/**")
-                        .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                        .antMatchers("/api/v1/manager/**")
-                        .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-                        .antMatchers("/api/v1/admin/**")
-                        .access("hasRole('ROLE_ADMIN')")
-                        .anyRequest().permitAll()
-                );
+//        http
+//                .authorizeRequests(authorize -> authorize
+//                        .antMatchers("/api/v1/user/**")
+//                        .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+//                        .antMatchers("/api/v1/manager/**")
+//                        .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+//                        .antMatchers("/api/v1/admin/**")
+//                        .access("hasRole('ROLE_ADMIN')")
+//                        .anyRequest().permitAll()
+//                );
 
         //                .antMatchers("/api/v1/manager/**")
 //                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")

@@ -18,14 +18,15 @@ public enum CommonError {
     //== 파일 관련 에러 코드 ==//
     CFM_FILE_NOT_ALLOWED(HttpStatus.BAD_REQUEST,"file-001","허용되지 않은 파일이 존재합니다."),
     CFM_FILE_NOT_FOUND(HttpStatus.NOT_FOUND,"file-002","파일이 존재하지 않습니다."),
-    //== 로그인 관련 에러 코드 ==//
+    //== 로그인 및 권한 관련 에러 코드 ==//
     CMM_AUTH_BAD_CREDENTIALS(HttpStatus.BAD_REQUEST,"auth-001","아이디 또는 비밀번호를 잘못 입력하셨습니다.\n입력하신 내용을 다시 확인해주세요."),
     CMM_AUTH_ACCOUNT_EXPIRED(HttpStatus.NOT_ACCEPTABLE, "auth-002", "계정만료"),
     CMM_AUTH_CREDENTIALS_EXPIRED(HttpStatus.NOT_ACCEPTABLE,"auth-003", "비밀번호 변경주기가 도래하였습니다."),
     CMM_AUTH_ACCOUNT_DISABLED(HttpStatus.NOT_ACCEPTABLE,"auth-004", "계정비활성화"),
     CMM_AUTH_ACCOUNT_LOCKED(HttpStatus.NOT_ACCEPTABLE,"auth-005", ""),
-    CMM_AUTH_REFRESH_TOKEN_NOT_FOUND(HttpStatus.FORBIDDEN, "auth-006", "Refresh Token이 누락 되었습니다."),
+    CMM_AUTH_REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "auth-006", "Refresh Token이 누락 되었습니다."),
     CMM_AUTH_ACCESS_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "auth-007", "Access Token이 누락 되었습니다."),
+    CMM_AUTH_ROLE_NOT_FOUND(HttpStatus.FORBIDDEN, "auth-008", "권한이 존재하지 않습니다."),
 
     //== 회원 관련 에러 코드 ==//
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "user-001", "회원정보가 존재하지 않습니다."),

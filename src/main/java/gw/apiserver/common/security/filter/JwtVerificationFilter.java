@@ -36,11 +36,6 @@ import java.io.IOException;
  */
 @Slf4j
 public class JwtVerificationFilter extends BasicAuthenticationFilter {
-//    private static final List<String> EXCLUDE_URL =
-//            List.of("/", "/members/signup", "/auth/login",
-//                    "/swagger-ui/**",
-//                    "/auth/token", "/auth/reissue", "/api/v1/ad/page-list"
-//            );
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtVerificationFilter(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
@@ -83,19 +78,4 @@ public class JwtVerificationFilter extends BasicAuthenticationFilter {
             CommonErrorResponseUtil.sendJsonErrorResponse(response, HttpStatus.UNAUTHORIZED, errorResponse);
         }
     }
-
-    /**
-     * EXCLUDE_URL과 동일한 요청이 들어왔을 경우, 현재 필터를 진행하지 않고 다음 필터 진행
-     *
-     * @param request current HTTP request
-     * @return boolean
-     * @throws ServletException HttpServletRequest
-     */
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        boolean result = EXCLUDE_URL.stream()
-//                .anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
-//
-//        return result;
-//    }
 }

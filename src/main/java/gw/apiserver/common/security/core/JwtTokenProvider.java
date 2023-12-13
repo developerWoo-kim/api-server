@@ -74,6 +74,7 @@ public class JwtTokenProvider {
         Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMillis);
         Map<String, Object> accessClaims = new HashMap<>();
         accessClaims.put("memberId", customUserDetails.getUsername());
+        accessClaims.put("role", customUserDetails.getRoles());
         String accessToken = Jwts.builder()
                 .setClaims(accessClaims)
                 .setSubject(customUserDetails.getUsername())

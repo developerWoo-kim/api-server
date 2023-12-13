@@ -1,5 +1,7 @@
 package gw.apiserver.oms.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import gw.apiserver.oms.auth.domain.AuthGroupUser;
 import gw.apiserver.oms.common.cmmcode.domain.BankCd;
 import gw.apiserver.oms.common.cmmcode.domain.MainDrivergnCd;
 import gw.apiserver.oms.common.cmmcode.domain.VhclLoadweightCd;
@@ -30,6 +32,11 @@ public class User {
     @Id
     @Column(name = "user_sn")
     private String userSn;                          // 사용자 일련번호
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "user" ,fetch = FetchType.LAZY)
+    private AuthGroupUser authGroupUser;
+
     private String userId;                          // 사용자 아이디
     private String userNm;                        // 사용자명
     private String pswd;                            // 비밀번호
