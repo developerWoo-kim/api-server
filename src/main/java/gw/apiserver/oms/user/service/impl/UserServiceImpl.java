@@ -59,12 +59,41 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public ResponseEntity<CommonResponse> joinUser(UserJoinForm form) {
+
         try {
             form.setPswd(passwordEncoder.encode(form.getPswd())); // 비밀번호 암호화
 
             User user = User.createUser(form, comtecopseqService.generateUUID_USR());
 
+            // 파일 저장
+
+            // 좌측 차량 사진
+            if(form.getLeftImg() != null && !form.getLeftImg().isEmpty())
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getLeftImg()));
+
+            // 우측 차량 사진
+            if(form.getRightImg() != null && !form.getRightImg().isEmpty())
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getRightImg()));
+
+            // 후측 차량 사진
+            if(form.getBackImg() != null && !form.getBackImg().isEmpty())
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getBackImg()));
+
+            // 계기판 사진
+            if(form.getDashBoardImg() != null && !form.getDashBoardImg().isEmpty())
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getDashBoardImg()));
+
+            // 화물차량 등록증 사진
+            if(form.getCrcImg() != null && !form.getCrcImg().isEmpty())
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getCrcImg()));
+
+            // 신분증 사진
+            if(form.getIdCardImg() != null && !form.getIdCardImg().isEmpty())
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getIdCardImg()));
+
             userRepository.save(user);
+
+
         } catch (Exception e) {
             log.error("Error during join user", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -103,8 +132,7 @@ public class UserServiceImpl implements UserService {
                 commonFileService.deleteSubFileOfMasterFile(user.getLeftAtchfileSn());
                 commonFileService.update(user.getLeftAtchfileSn(), "user", form.getLeftImg());
             } else {
-                String atchFileId = commonFileService.save("user", form.getLeftImg());
-                user.setLeftAtchfileSn(atchFileId);
+                user.setLeftAtchfileSn(commonFileService.save("user", form.getLeftImg()));
             }
         }
 
@@ -114,8 +142,7 @@ public class UserServiceImpl implements UserService {
                 commonFileService.deleteSubFileOfMasterFile(user.getRightAtchfileSn());
                 commonFileService.update(user.getRightAtchfileSn(), "user", form.getRightImg());
             } else {
-                String atchFileId = commonFileService.save("user", form.getRightImg());
-                user.setRightAtchfileSn(atchFileId);
+                user.setRightAtchfileSn(commonFileService.save("user", form.getRightImg()));
             }
         }
 
@@ -125,8 +152,7 @@ public class UserServiceImpl implements UserService {
                 commonFileService.deleteSubFileOfMasterFile(user.getBackAtchfileSn());
                 commonFileService.update(user.getBackAtchfileSn(), "user", form.getBackImg());
             } else {
-                String atchFileId = commonFileService.save("user", form.getBackImg());
-                user.setBackAtchfileSn(atchFileId);
+                user.setBackAtchfileSn(commonFileService.save("user", form.getBackImg()));
             }
         }
 
@@ -136,8 +162,7 @@ public class UserServiceImpl implements UserService {
                 commonFileService.deleteSubFileOfMasterFile(user.getPnlAtchfileSn());
                 commonFileService.update(user.getPnlAtchfileSn(), "user", form.getDashBoardImg());
             } else {
-                String atchFileId = commonFileService.save("user", form.getDashBoardImg());
-                user.setPnlAtchfileSn(atchFileId);
+                user.setPnlAtchfileSn(commonFileService.save("user", form.getDashBoardImg()));
             }
         }
 
@@ -147,8 +172,7 @@ public class UserServiceImpl implements UserService {
                 commonFileService.deleteSubFileOfMasterFile(user.getVhclRgstrAtchfileSn());
                 commonFileService.update(user.getVhclRgstrAtchfileSn(), "user", form.getCrcImg());
             } else {
-                String atchFileId = commonFileService.save("user", form.getCrcImg());
-                user.setVhclRgstrAtchfileSn(atchFileId);
+                user.setVhclRgstrAtchfileSn(commonFileService.save("user", form.getCrcImg()));
             }
         }
 
@@ -158,8 +182,7 @@ public class UserServiceImpl implements UserService {
                 commonFileService.deleteSubFileOfMasterFile(user.getIdcardAtchfileSn());
                 commonFileService.update(user.getIdcardAtchfileSn(), "user", form.getIdCardImg());
             } else {
-                String atchFileId = commonFileService.save("user", form.getIdCardImg());
-                user.setIdcardAtchfileSn(atchFileId);
+                user.setIdcardAtchfileSn(commonFileService.save("user", form.getIdCardImg()));
             }
         }
 

@@ -61,7 +61,7 @@ public class UserApiController {
             }
     )
     @PostMapping("/api/v1/user/join")
-    public ResponseEntity<CommonResponse> joinUser(@RequestBody UserJoinForm form) {
+    public ResponseEntity<CommonResponse> joinUser(UserJoinForm form) {
         return userService.joinUser(form);
     }
 
