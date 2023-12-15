@@ -6,6 +6,8 @@ import gw.apiserver.oms.common.cmmcode.domain.VhclTypeCd;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Data
 @NoArgsConstructor
 public class UserJoinForm {
@@ -18,5 +20,6 @@ public class UserJoinForm {
     private String vhclNo;                          // 차량번호
     private VhclLoadweightCd vhclLoadweightCd;      // 차량 적재무게 코드
     private VhclTypeCd vhclTypeCd;                  // 차량 종류 코드
+    @NotBlank(message = "주 운행지역이 누락되었습니다.")
     private String mainDrivergnCd;          // 주 운행지역 코드
 }

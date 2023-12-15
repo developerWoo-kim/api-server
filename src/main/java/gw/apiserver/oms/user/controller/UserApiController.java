@@ -46,7 +46,7 @@ public class UserApiController {
 //                    paramType = "header"
 //            )
 //    })
-    @GetMapping("/api/v1/user/{id}/id-duple-check")
+    @GetMapping("/api/v1/user/id-duple-check/{id}")
     public ResponseEntity<CommonResponse> idDuplicationCheck(@PathVariable("id") String id) {
         return userService.idDuplicationCheck(id);
     }

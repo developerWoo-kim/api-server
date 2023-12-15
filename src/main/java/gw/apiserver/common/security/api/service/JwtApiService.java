@@ -3,6 +3,8 @@ package gw.apiserver.common.security.api.service;
 import gw.apiserver.common.security.core.JwtTokenProvider;
 import gw.apiserver.common.security.core.response.dto.AccessTokenDto;
 import gw.apiserver.common.security.exception.custom.RefreshTokenNotFound;
+import gw.apiserver.common.utils.reponse.code.CommonError;
+import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class JwtApiService {
     public AccessTokenDto getAccessToken(HttpServletRequest req, HttpServletResponse rep) {
         String refreshToken = Optional
                 .ofNullable(jwtTokenProvider.resolveRefreshToken(req))
-                .orElseThrow(RefreshTokenNotFound::new);
+                .orElseThrow(() -> new GlobalApiException(CommonError.CMM_AUTH_REFRESH_TOKEN_NOT_FOUND));
 
         AccessTokenDto accessTokenDto = null;
         if(StringUtils.hasText(refreshToken) && jwtTokenProvider.validateToken(refreshToken, req, rep)) {
