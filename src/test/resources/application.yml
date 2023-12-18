@@ -44,6 +44,10 @@ logging.level:
 #  org.hibernate.type: trace #??? ?? 2.x, hibernate5
 # org.hibernate.orm.jdbc.bind: trace #??? ?? 3.x, hibernate6
 
+Globals:
+  rootPath: /Users/gimgeon-u/intelliJProject/
+  AesSecretKey: dpcmsV1AesSecret
+  fileStorePath: /Users/gimgeon-u/intelliJProject/upload/
 
 jwt:
   secret-key: 'fa5e2d1c7e68b4173f7099a756a243d2b84e3a3d1c4b6f0ed9e4bebf4682d22e'

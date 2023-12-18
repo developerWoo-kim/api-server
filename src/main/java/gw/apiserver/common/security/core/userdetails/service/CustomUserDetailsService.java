@@ -28,13 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(""));
         AuthGroup authGroup = user.getAuthGroupUser().getAuthGroup();
 
-        String role = "";
-        List<AuthGroupRole> roleList = authGroup.getRoleList();
-        for (int i = 0; i < roleList.size(); i++) {
-            role += roleList.get(i).getId().getAuthrtRole();
-            if(i < roleList.size()-1)
-                role += ",";
-        }
+        String role = authGroup.getRoleStr();
 
         CustomUserDetails customUserDetails = new CustomUserDetails(user.getUserId(), user.getPswd(), role);
 

@@ -97,10 +97,11 @@ public class JwtTokenProvider {
      * @param memberId String
      * @return AccessTokenDto
      */
-    public AccessTokenDto generateAccessTokenDto(String memberId) {
+    public AccessTokenDto generateAccessTokenDto(String memberId, String role) {
         Date accessTokenExpiresIn = getTokenExpiration(accessTokenExpirationMillis);
         Map<String, Object> accessClaims = new HashMap<>();
         accessClaims.put("memberId", memberId);
+        accessClaims.put("role", role);
         String accessToken = Jwts.builder()
                 .setClaims(accessClaims)
                 .setSubject(memberId)

@@ -23,4 +23,17 @@ public class AuthGroup {
 
     @OneToMany(mappedBy = "authGroup", cascade = CascadeType.ALL)
     private List<AuthGroupRole> roleList = new ArrayList<>();
+
+    //== 편의 메서드 ==//
+    public String getRoleStr() {
+        String role = "";
+        List<AuthGroupRole> roleList = this.getRoleList();
+        for (int i = 0; i < roleList.size(); i++) {
+            role += roleList.get(i).getId().getAuthrtRole();
+            if(i < roleList.size()-1)
+                role += ",";
+        }
+
+        return role;
+    }
 }

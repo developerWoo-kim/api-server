@@ -46,10 +46,4 @@ public class JwtApiController {
     public AccessTokenDto getAccessToken(HttpServletRequest req, HttpServletResponse rep) {
         return jwtApiService.getAccessToken(req, rep);
     }
-
-    @PostMapping("/auth/token2")
-    public AccessTokenDto getAccessToken2(HttpServletRequest req, HttpServletResponse rep) {
-        return jwtApiService.getAccessToken(req, rep);
-    }
-
 }
