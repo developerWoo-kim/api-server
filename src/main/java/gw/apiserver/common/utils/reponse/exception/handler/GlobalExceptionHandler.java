@@ -35,8 +35,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e, HttpHeaders headers,
-                                                               HttpStatus status, WebRequest request) {
+    public ResponseEntity<Object> handleBindException(BindException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
         CommonError error = CommonError.CMM_INVALID_PARAMETER;
         return handleExceptionInternal(e, request, error);
     }

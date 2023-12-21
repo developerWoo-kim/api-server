@@ -3,8 +3,11 @@ package gw.apiserver.oms.ad.service;
 import gw.apiserver.common.paging.SearchCondition;
 import gw.apiserver.common.utils.reponse.code.CommonError;
 import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
+import gw.apiserver.oms.ad.controller.queryDto.AdApplyDto;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
+import gw.apiserver.oms.ad.domain.AdConditi;
 import gw.apiserver.oms.ad.domain.AdMng;
+import gw.apiserver.oms.ad.domain.AdPrefer;
 import gw.apiserver.oms.ad.repository.AdMngRepository;
 import gw.apiserver.oms.aplct.domain.AplctUserMng;
 import gw.apiserver.oms.aplct.repository.AplctUserMngRepository;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static gw.apiserver.common.utils.date.CommonDateUtil.*;
@@ -79,6 +83,49 @@ public class AdApiServiceImpl implements AdApiService {
 
         AplctUserMng aplctUser = AplctUserMng.createAplctUser(comtecopseqService.generateUUID_APL(), adMng, user);
         aplctUserMngRepository.save(aplctUser);
+    }
+
+    @Override
+    public List<AdApplyDto> findApplyAdList(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new GlobalApiException(CommonError.USER_NOT_FOUND));
+
+        List<AdMng> applyAdList = adMngRepository.findApplyAdList(user.getUserSn());
+
+        if(applyAdList.isEmpty())
+            throw new GlobalApiException(CommonError.AD_APPLY_LIST_NOT_FOUND);
+
+        List<AdApplyDto> adApplyDtoList = new ArrayList<>();
+        for (AdMng adMng : applyAdList) {
+            AdApplyDto adApplyDto = new AdApplyDto(adMng);
+            String adSn = adMng.getAdSn();
+
+            // 우대 조건 조회
+            List<AdPrefer> adPrefer = adMngRepository.findAdPrefer(adSn);
+            if(!adPrefer.isEmpty()) {
+                for (AdPrefer prefer : adPrefer) {
+                    adApplyDto.addPrefer(prefer);
+                }
+            }
+
+            // 응모 조건에서 배당금 조회
+            List<AdConditi> findAdConditi = adMngRepository.findAdConditi(adSn);
+            if(!findAdConditi.isEmpty()) {
+                for (AdConditi adConditi : findAdConditi) {
+                    adApplyDto.addConditi(adConditi);
+                }
+            }
+            // 응모 조건에서 회원에 해당되는 배당금 조회
+            adMngRepository.findAdConditi(adSn).stream()
+                    .filter(adConditi -> adConditi.getVhclLoadweightCd().equals(user.getVhclLoadweightCd()))
+                    .findFirst()
+                    .ifPresent(adConditi -> adApplyDto.addUserAllocAmt(adConditi.getAllocAmt()));
+
+
+            adApplyDtoList.add(adApplyDto);
+        }
+
+        return adApplyDtoList;
     }
 
 }

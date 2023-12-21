@@ -3,15 +3,17 @@ package gw.apiserver.ad;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import gw.apiserver.common.utils.reponse.code.CommonError;
+import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
-import gw.apiserver.oms.ad.domain.AdConditi;
+import gw.apiserver.oms.ad.domain.*;
 
-import gw.apiserver.oms.ad.domain.AdMng;
-import gw.apiserver.oms.ad.domain.QAdConditi;
-import gw.apiserver.oms.ad.domain.QAdMng;
 import gw.apiserver.oms.ad.repository.AdMngRepository;
+import gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd;
+import gw.apiserver.oms.aplct.domain.AplctUserMng;
 import gw.apiserver.oms.common.cmmcode.domain.QComtCcmnDetailCode;
 import gw.apiserver.oms.user.domain.QUser;
+import gw.apiserver.oms.user.domain.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,9 +28,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static gw.apiserver.oms.ad.domain.QAdConditi.adConditi;
 import static gw.apiserver.oms.ad.domain.QAdMng.adMng;
+import static gw.apiserver.oms.ad.domain.QAdPrefer.adPrefer;
 import static gw.apiserver.oms.aplct.domain.QAplctUserMng.aplctUserMng;
 import static gw.apiserver.oms.common.cmmcode.domain.QComtCcmnDetailCode.comtCcmnDetailCode;
 import static gw.apiserver.oms.user.domain.QUser.user;
@@ -96,7 +101,7 @@ public class AdMngRepositoryTest {
     @Test
     @DisplayName("응모 가능자 수 조회")
     public void findPossibilityCount() {
-        String adSn = "AD_0000007";
+        String adSn = "AD_0000011";
         Integer count = queryFactory
                 .select(adConditi.aplctPsbltycnt.sum())
                 .from(adConditi)
@@ -105,7 +110,7 @@ public class AdMngRepositoryTest {
 
         System.out.println(count);
 
-        Assertions.assertThat(count).isEqualTo(8);
+        Assertions.assertThat(count).isEqualTo(3);
     }
 
     @Test
@@ -138,4 +143,94 @@ public class AdMngRepositoryTest {
         return !date.isBefore(startDate) && !date.isAfter(endDate);
     }
 
+    @Test
+    @DisplayName("회원이 응모한 광고 목록 조회")
+    public void findApplyAdListTest() {
+        String userSn = "USR_00000021";
+
+        User findUser = queryFactory
+                .selectFrom(user)
+                .where(
+                        user.userSn.eq(userSn)
+                )
+                .fetchOne();
+
+        Optional<List<AdMng>> fetch1 = Optional.of(queryFactory
+                .select(adMng)
+                .from(adMng)
+                .join(adMng.aplctUserMngs, aplctUserMng)
+                .where(
+                        aplctUserMng.user.userSn.eq(userSn),
+                        aplctUserMng.adPrgrsSttscd.eq(AdPrgrsSttsCd.MNG004001)
+                )
+                .fetch());
+
+        Optional<List<AdMng>> fetch2 = Optional.ofNullable(queryFactory
+                .select(adMng)
+                .from(adMng)
+                .join(adMng.aplctUserMngs, aplctUserMng)
+                .where(
+                        aplctUserMng.user.userSn.eq(userSn),
+                        aplctUserMng.adPrgrsSttscd.eq(AdPrgrsSttsCd.MNG004001)
+                )
+                .fetch());
+
+
+        List<AdMng> fetch = queryFactory
+                .select(adMng)
+                .from(adMng)
+                .join(adMng.aplctUserMngs, aplctUserMng)
+                .where(
+                        aplctUserMng.user.userSn.eq(userSn),
+                        aplctUserMng.adPrgrsSttscd.eq(AdPrgrsSttsCd.MNG004001)
+                )
+                .fetch();
+
+        for (AdMng mng : fetch) {
+            String adSn = mng.getAdSn();
+            Optional<AdConditi> first = adMngRepository.findAdConditi(adSn).stream()
+                    .filter(adConditi -> adConditi.getVhclLoadweightCd().equals(findUser.getVhclLoadweightCd()))
+                    .findFirst();
+            if(first.isPresent()) {
+                AdConditi findAdConditi = first.get();
+                System.out.println(adSn + " : "+ findAdConditi.getAllocAmt());
+            }
+
+        }
+
+        Assertions.assertThat(fetch.size()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("응모한 광고가 없을때 테스트")
+    public void applyAdListEmptyTest() {
+        String userSn = "USR_000000213";
+
+        List<AdMng> fetch = queryFactory
+                .select(adMng)
+                .from(adMng)
+                .join(adMng.aplctUserMngs, aplctUserMng)
+                .where(
+                        aplctUserMng.user.userSn.eq(userSn),
+                        aplctUserMng.adPrgrsSttscd.eq(AdPrgrsSttsCd.MNG004001)
+                )
+                .fetch();
+
+        Assertions.assertThat(fetch).isEmpty();
+    }
+
+    @Test
+    @DisplayName("우대조건 조회")
+    public void findAdPreferCondition() {
+        String adSn = "AD_0000011";
+
+        List<AdPrefer> fetch = queryFactory
+                .selectFrom(adPrefer)
+                .where(
+                        adPrefer.id.adSn.eq(adSn)
+                )
+                .fetch();
+
+        Assertions.assertThat(fetch.size()).isEqualTo(5);
+    }
 }

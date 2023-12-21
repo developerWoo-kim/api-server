@@ -46,6 +46,14 @@ public class AuthorizationChecker {
         // TODO 추후 리팩토링 해야함
         // API 권한 체크
         List<ApiMng> apiList = apiMngService.findAllApi();
+        if(apiList.isEmpty()) {
+            return true;
+        }
+
+        if(apiList.stream().noneMatch(apiMng -> apiMng.uriMatcher(url, method))) {
+            return true;
+        }
+
         for (ApiMng apiMng : apiList) {
             if(apiMng.uriMatcher(url, method)) {
                 List<AuthGroupApi> authGroupApiList = apiMng.getAuthGroupApiList();

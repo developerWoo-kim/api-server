@@ -5,9 +5,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import gw.apiserver.common.paging.SearchCondition;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.domain.AdConditi;
+import gw.apiserver.oms.ad.domain.AdMng;
+import gw.apiserver.oms.ad.domain.AdPrefer;
 import gw.apiserver.oms.ad.domain.QAdConditi;
 import gw.apiserver.oms.ad.domain.dto.AdMngDto;
 import gw.apiserver.oms.ad.repository.AdMngCustomRepository;
+import gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import static gw.apiserver.oms.ad.domain.QAdConditi.adConditi;
 import static gw.apiserver.oms.ad.domain.QAdMng.adMng;
+import static gw.apiserver.oms.ad.domain.QAdPrefer.adPrefer;
 import static gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd.MNG004001;
 import static gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd.MNG004003;
 import static gw.apiserver.oms.aplct.domain.QAplctUserMng.aplctUserMng;
@@ -79,6 +83,30 @@ public class AdMngCustomRepositoryImpl implements AdMngCustomRepository {
                 .select(adConditi)
                 .from(adConditi)
                 .where(adConditi.adConditiId.adSn.eq(adSn))
+                .fetch();
+    }
+
+    @Override
+    public List<AdPrefer> findAdPrefer(String adSn) {
+        return queryFactory
+                .selectFrom(adPrefer)
+                .where(
+                        adPrefer.id.adSn.eq(adSn)
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<AdMng> findApplyAdList(String userSn) {
+
+        return queryFactory
+                .select(adMng)
+                .from(adMng)
+                .join(adMng.aplctUserMngs, aplctUserMng)
+                .where(
+                        aplctUserMng.user.userSn.eq(userSn),
+                        aplctUserMng.adPrgrsSttscd.eq(AdPrgrsSttsCd.MNG004001)
+                )
                 .fetch();
     }
 

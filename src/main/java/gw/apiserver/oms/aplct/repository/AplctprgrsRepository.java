@@ -3,6 +3,14 @@ package gw.apiserver.oms.aplct.repository;
 import gw.apiserver.oms.aplct.domain.Aplctprgrs;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AplctprgrsRepository extends JpaRepository<Aplctprgrs, String> {
+import java.util.List;
+import java.util.Optional;
 
+public interface AplctprgrsRepository extends JpaRepository<Aplctprgrs, String> {
+    /**
+     * 증빙 회차 조회
+     * @param aplctSn String
+     * @return Optional<List<Aplctprgrs>>
+     */
+    Optional<List<Aplctprgrs>> findByAplctUserMng_AplctSn(String aplctSn);
 }

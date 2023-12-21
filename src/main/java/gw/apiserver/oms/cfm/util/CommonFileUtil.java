@@ -22,7 +22,7 @@ public class CommonFileUtil {
     public static void saveFile(String fileStrePath, String fileStreNm, MultipartFile file) {
         try {
             String uploadPath = fileStrePath + fileStreNm;
-            createDir(uploadPath);
+            createDir(fileStrePath);
             file.transferTo(new File(uploadPath));
         } catch (IOException e) {
             log.error(e.getMessage(), e);

@@ -7,25 +7,18 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
-/**
- * 광고 응모 조건 비식별 복합키 매핑을 위한 클래스
- *
- * @create gwkim
- * @since 2023.08.03
- * @version 0.0.1
- */
 @Getter
 @Embeddable
 @NoArgsConstructor
-public class AdConditiId implements Serializable {
+public class AdPreferId implements Serializable {
     @Column(name = "ad_sn")
     private String adSn;
 
-    @Column(name = "sort")
-    private int sort;
+    @Column(name = "pref_condinm")
+    private String prefCondinm;
 
-    public AdConditiId(String adSn, int sort) {
+    public AdPreferId(String adSn, String prefCondinm) {
         this.adSn = adSn;
-        this.sort = sort;
+        this.prefCondinm = prefCondinm;
     }
 }

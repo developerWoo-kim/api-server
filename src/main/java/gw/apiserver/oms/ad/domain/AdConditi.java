@@ -27,7 +27,7 @@ public class AdConditi {
     @EmbeddedId
     private AdConditiId adConditiId;            // 복합키 ( AD_SN, SORT)
 
-//    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private VhclLoadweightCd vhclLoadweightCd;  // 차량 적재무게 코드
     private int aplctPsbltycnt;                 // 응모 가능수
     private int allocAmt;                       // 배당 금액

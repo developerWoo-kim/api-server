@@ -24,7 +24,9 @@ import java.util.List;
 public class CommonErrorResponse {
     @Schema(description = "에러 코드")
     private String code;
+    @Schema(description = "에러 메시지")
     private String message;
+    @Schema(description = "요청 URI")
     private String path;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -33,8 +35,11 @@ public class CommonErrorResponse {
     @Getter
     @Builder
     @RequiredArgsConstructor
+    @Schema(description = "유효성 검사 오류")
     public static class ValidationError {
+        @Schema(description = "오류가 발생한 필드")
         private final String field;
+        @Schema(description = "오류 메시지")
         private final String message;
         public static ValidationError of(final FieldError fieldError) {
             return ValidationError.builder()

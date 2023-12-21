@@ -35,7 +35,12 @@ public enum CommonError {
     AD_APPLY_DUPLICATION(HttpStatus.BAD_REQUEST, "ad-001", "이미 응모한 광고입니다."),
     AD_ALREADY_EXISTS_RUNNING(HttpStatus.BAD_REQUEST, "ad-002", "진행중인 광고가 존재합니다."),
     AD_NO_APPLY_PERIOD(HttpStatus.BAD_REQUEST, "ad-003", "응모 기간이 아닙니다."),
-    AD_NOT_MATCH_CONDITION(HttpStatus.BAD_REQUEST, "ad-004", "응모 조건에 해당되지 않습니다.");
+    AD_NOT_MATCH_CONDITION(HttpStatus.BAD_REQUEST, "ad-004", "응모 조건에 해당되지 않습니다."),
+    AD_APPLY_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "ad-005", "응모 내역이 존재하지 않습니다."),
+
+    //== 광고 증빙 관련 에러 코드 ==//
+    APLCT_PRGRS_NOT_FOUND(HttpStatus.NOT_FOUND, "aplct-001", "운행 회차가 존재하지 않습니다.");
+
 
     private HttpStatus status;
     private String code;

@@ -6,6 +6,7 @@ import gw.apiserver.common.paging.SearchCondition;
 import gw.apiserver.common.security.core.JwtTokenProvider;
 import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
+import gw.apiserver.oms.ad.controller.queryDto.AdApplyDto;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.service.AdApiService;
 import gw.apiserver.oms.user.controller.form.UserUpdateForm;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Api(tags = {"광고 API"})
 @Slf4j
@@ -85,17 +87,45 @@ public class AdApiController {
     public ResponseEntity<CommonResponse> apply(@PathVariable("adSn") String adSn, HttpServletRequest req) {
         String userId = tokenProvider.getUserId(req);
         adApiService.applyAd(adSn, userId);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                CommonResponse.createResponse(HttpStatus.OK.toString(), "응모 되었습니다."));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(CommonResponse.createResponse(HttpStatus.OK.toString(), "응모 되었습니다."));
     }
 
+    @Operation(
+            summary = "고객이 응모한 광고 목록 조회",
+            description = "고객이 응모한 광고 목록 조회",
+            responses = {
+
+                    @ApiResponse(responseCode = "200", description = "조회 성공"),
+                    @ApiResponse(responseCode = "401", description = "Access Token 누락"),
+                    @ApiResponse(responseCode = "403", description = "Refresh Token 만료 or Refresh Token 인증 실패")
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "authorization",
+                    value = "Access Token",
+                    required = true,
+                    dataType = "string",
+                    paramType = "header"
+            )
+    })
+    @GetMapping("/api/v1/ad/apply-list")
+    public ResponseEntity<List<AdApplyDto>> findApplyAdList(HttpServletRequest req) {
+        String userId = tokenProvider.getUserId(req);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(adApiService.findApplyAdList(userId));
+    }
 
 
     @PostMapping("/api/fileTest")
     public ResponseEntity<CommonResponse> fileTest(UserUpdateForm form) {
         System.out.println(form.getUserSn());
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(CommonResponse.createResponse(HttpStatus.INTERNAL_SERVER_ERROR.toString(), "서버 오류"));
     }
 }

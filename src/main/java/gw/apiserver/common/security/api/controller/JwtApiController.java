@@ -29,8 +29,8 @@ public class JwtApiController {
             description = "Refresh Token을  이용한 Access Token 갱신",
             responses = {
 
-                    @ApiResponse(responseCode = "200", description = "Access Token 갱신 성공", content = @Content(schema = @Schema(implementation = AccessTokenDto.class))),
-                    @ApiResponse(responseCode = "400", description = "Refresh Token 누락"),
+                    @ApiResponse(responseCode = "200", description = "Access Token 갱신 성공"),
+                    @ApiResponse(responseCode = "400", description = "Refresh Token 누락", content = @Content(schema = @Schema(implementation = CommonErrorResponse.class))),
                     @ApiResponse(responseCode = "403", description = "Refresh Token 만료 or Refresh Token 인증 실패", content = @Content(schema = @Schema(implementation = CommonErrorResponse.class)))
             }
     )
@@ -42,7 +42,7 @@ public class JwtApiController {
                     dataType = "string",
                     paramType = "header")
     })
-    @PostMapping("/auth/token")
+    @PostMapping("/api/v1/auth/token")
     public AccessTokenDto getAccessToken(HttpServletRequest req, HttpServletResponse rep) {
         return jwtApiService.getAccessToken(req, rep);
     }

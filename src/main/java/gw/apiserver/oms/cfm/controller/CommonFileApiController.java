@@ -12,7 +12,7 @@ public class CommonFileApiController {
 
     @PostMapping("/api/v1/file/test")
     public void fileUploadTest(MultipartFile file) {
-        commonFileService.save("user", file);
+        commonFileService.save("adProof", file);
     }
 
     @PutMapping("/api/v1/file/test/{atchFileId}")
