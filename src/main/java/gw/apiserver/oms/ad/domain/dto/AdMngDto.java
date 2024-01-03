@@ -11,13 +11,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class AdMngDto {
-    private String adSn;
+    private String id;
     private AdSttsCd adSttscd;              // 광고 상태코드 (MNG003001 : 대기, MNG003002 : 진행중, MNG003003 : 완료)
     private LocalDate adBgngYmd;            // 광고 시작일자
     private LocalDate adEndYmd;             // 광고 종료일자
     private LocalDate aplctBgngYmd;         // 응모 시작일자
     private LocalDate aplctEndYmd;          // 응모 종료일자
     private String adnm;                    // 광고명
+    private String adUserNm;        // 광고주명
     private String adCn;                    // 광고 내용
     private Long adAmt;                      // 광고 금액
     private String imgAtchfileSn;           // 이미지 첨부파일 일련번호
@@ -27,8 +28,8 @@ public class AdMngDto {
     private LocalDateTime regDt;            // 등록일시
     private String delYn;                   // 삭제여부
 
-    public AdMngDto(String adSn, AdSttsCd adSttscd, LocalDate adBgngYmd, LocalDate adEndYmd, LocalDate aplctBgngYmd, LocalDate aplctEndYmd, String adnm, String adCn, Long adAmt, String imgAtchfileSn, String orgnlAtchfileSn, String useYn, String rgtr, LocalDateTime regDt, String delYn) {
-        this.adSn = adSn;
+    public AdMngDto(String id, AdSttsCd adSttscd, LocalDate adBgngYmd, LocalDate adEndYmd, LocalDate aplctBgngYmd, LocalDate aplctEndYmd, String adnm, String adCn, Long adAmt, String imgAtchfileSn, String orgnlAtchfileSn, String useYn, String rgtr, LocalDateTime regDt, String delYn) {
+        this.id = id;
         this.adSttscd = adSttscd;
         this.adBgngYmd = adBgngYmd;
         this.adEndYmd = adEndYmd;
@@ -46,7 +47,8 @@ public class AdMngDto {
     }
 
     public AdMngDto(AdMng adMng) {
-        this.adSn = adMng.getAdSn();
+        this.id = adMng.getAdSn();
+        this.adUserNm = adMng.getUser().getUserNm();
         this.adSttscd = adMng.getAdSttscd();
         this.adBgngYmd = adMng.getAdBgngYmd();
         this.adEndYmd = adMng.getAdEndYmd();

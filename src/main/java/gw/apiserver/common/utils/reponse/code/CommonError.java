@@ -39,7 +39,8 @@ public enum CommonError {
     AD_APPLY_LIST_NOT_FOUND(HttpStatus.NOT_FOUND, "ad-005", "응모 내역이 존재하지 않습니다."),
 
     //== 광고 증빙 관련 에러 코드 ==//
-    APLCT_PRGRS_NOT_FOUND(HttpStatus.NOT_FOUND, "aplct-001", "운행 회차가 존재하지 않습니다.");
+    APLCT_PRGRS_NOT_FOUND(HttpStatus.NOT_FOUND, "aplct-001", "운행 회차가 존재하지 않습니다."),
+    APLCT_AD_NOT_FOUND(HttpStatus.NOT_FOUND, "aplct-002", "진행하신 광고 내역이 없어요!");
 
 
     private HttpStatus status;

@@ -1,12 +1,15 @@
 package gw.apiserver.ad.service;
 
+import gw.apiserver.common.utils.pagination.Pagination;
 import gw.apiserver.oms.ad.controller.queryDto.AdApplyDto;
+import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.domain.AdConditi;
 import gw.apiserver.oms.ad.domain.AdMng;
 import gw.apiserver.oms.ad.domain.AdPrefer;
 import gw.apiserver.oms.ad.repository.AdMngRepository;
 import gw.apiserver.oms.user.domain.User;
 import gw.apiserver.oms.user.repository.UserRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,6 +72,69 @@ public class AdMngServiceTest {
             adApplyDtoList.add(adApplyDto);
         }
 
-
     }
+
+    @Test
+    @DisplayName("광고 페이징 목록 NO OFFSET 테스트")
+    void adNoOffsetPagingList() {
+        List<AdListDto> adList = adMngRepository.findAdList(5, "AD_0000228");
+
+        Assertions.assertThat(adList.size()).isEqualTo(5);
+        Assertions.assertThat(adList.get(0).getId()).isEqualTo("AD_0000227");
+//        Assertions.assertThat(adList.get(1).getAdSn()).isEqualTo("AD_0000231");
+//        Assertions.assertThat(adList.get(2).getAdSn()).isEqualTo("AD_0000230");
+//        Assertions.assertThat(adList.get(3).getAdSn()).isEqualTo("AD_0000229");
+//        Assertions.assertThat(adList.get(4).getAdSn()).isEqualTo("AD_0000228");
+    }
+
+    @Test
+    @DisplayName("광고 페이징 목록 NO OFFSET 테스트 - 카운트 테스트")
+    void adNoOffsetPagingList_countTest() {
+        List<AdListDto> adList = adMngRepository.findAdList(5, "AD_0000009");
+
+        Assertions.assertThat(adList.size()).isEqualTo(2);
+        Assertions.assertThat(adList.get(0).getId()).isEqualTo("AD_0000008");
+        Assertions.assertThat(adList.get(1).getId()).isEqualTo("AD_0000007");
+//        Assertions.assertThat(adList.get(1).getAdSn()).isEqualTo("AD_0000231");
+//        Assertions.assertThat(adList.get(2).getAdSn()).isEqualTo("AD_0000230");
+//        Assertions.assertThat(adList.get(3).getAdSn()).isEqualTo("AD_0000229");
+//        Assertions.assertThat(adList.get(4).getAdSn()).isEqualTo("AD_0000228");
+    }
+
+    @Test
+    @DisplayName("광고 페이징 목록 NO OFFSET - hasNextData 테스트")
+    void adNoOffsetPagingList_hasNextData() {
+        Optional<AdMng> AdMng = adMngRepository.hasNextData("AD_0000009");
+
+        Assertions.assertThat(AdMng).isNotEmpty();
+//        Assertions.assertThat(adList.get(1).getAdSn()).isEqualTo("AD_0000231");
+//        Assertions.assertThat(adList.get(2).getAdSn()).isEqualTo("AD_0000230");
+//        Assertions.assertThat(adList.get(3).getAdSn()).isEqualTo("AD_0000229");
+//        Assertions.assertThat(adList.get(4).getAdSn()).isEqualTo("AD_0000228");
+    }
+
+    @Test
+    @DisplayName("광고 페이징 목록 NO OFFSET - hasNextData 테스트")
+    void adNoOffsetPagingList_isNotExitNextData() {
+        Optional<AdMng> AdMng = adMngRepository.hasNextData("AD_0000007");
+        Assertions.assertThat(AdMng).isEmpty();
+    }
+
+    @Test
+    @DisplayName("광고 페이징 목록 생성 테스트")
+    void adNoOffsetPagingList_createTest() {
+        List<AdListDto> adList = adMngRepository.findAdList(5, "AD_0000007");
+
+        boolean hasNextData = !adList.isEmpty() && adMngRepository.hasNextData(adList.get(adList.size() - 1).getId()).isPresent();
+        Pagination<AdListDto> pagination = Pagination.createPagination(hasNextData, adList);
+
+        Assertions.assertThat(pagination.getCount()).isEqualTo(0);
+        Assertions.assertThat(pagination.isHasNextData()).isEqualTo(false);
+//        Assertions.assertThat(adList.get(1).getAdSn()).isEqualTo("AD_0000231");
+//        Assertions.assertThat(adList.get(2).getAdSn()).isEqualTo("AD_0000230");
+//        Assertions.assertThat(adList.get(3).getAdSn()).isEqualTo("AD_0000229");
+//        Assertions.assertThat(adList.get(4).getAdSn()).isEqualTo("AD_0000228");
+    }
+
+
 }

@@ -4,6 +4,7 @@ package gw.apiserver.oms.aplct.controller;
 import gw.apiserver.common.utils.reponse.meta.CommonErrorResponse;
 import gw.apiserver.common.utils.reponse.meta.CommonResponse;
 import gw.apiserver.oms.aplct.controller.form.AdProofForm;
+import gw.apiserver.oms.aplct.controller.query.AdProofDetailDto;
 import gw.apiserver.oms.aplct.service.AplctprgrsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,11 +17,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @Slf4j
@@ -57,5 +57,30 @@ public class AplctApiController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(CommonResponse.createResponse(HttpStatus.OK.toString(), "증빙 등록이 완료되었습니다."));
+    }
+
+    @Operation(
+            summary = "증빙 내역 조회 API",
+            description = "증빙 내역 조회",
+            responses = {
+
+                    @ApiResponse(responseCode = "200", description = "성공"),
+                    @ApiResponse(responseCode = "401", description = "Access Token 누락",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CommonErrorResponse.class))),
+                    @ApiResponse(responseCode = "403", description = "Refresh Token 만료 or Refresh Token 인증 실패")
+            }
+    )
+    @ApiImplicitParams({
+            @ApiImplicitParam(
+                    name = "authorization",
+                    value = "Access Token",
+                    required = true,
+                    dataType = "string",
+                    paramType = "header"
+            )
+    })
+    @GetMapping("/api/v1/aplct/proof/detail/{aplctSn}")
+    public List<AdProofDetailDto> findAdProofDetail(@PathVariable("aplctSn") String aplctSn) {
+        return aplctprgrsService.findAdRoofDetail(aplctSn);
     }
 }

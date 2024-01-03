@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +33,7 @@ public class DummyGeneratorTest {
     @Autowired AplctprgrsRepository aplctprgrsRepository;
 
     @Test
+    @Rollback(value = false)
     @DisplayName("회원 생성 테스트")
     void createUserTest() {
         User driverUser = dummyGenerator.createDriverUser();
@@ -95,8 +96,8 @@ public class DummyGeneratorTest {
         Assertions.assertThat(aplctUserMngRepository.findById(aplctUser.getAplctSn())).isNotEmpty();
 
         dummyGenerator.createAplctprgrs(ad, aplctUser);
-        List<Aplctprgrs> aplctprgrs = aplctprgrsRepository.findByAplctUserMng_AplctSn(aplctUser.getAplctSn()).orElseThrow();
+        List<Aplctprgrs> aplctprgrs = aplctprgrsRepository.findByAplctUserMng_AplctSn_OrderByAdRoundsBgngYmdDesc(aplctUser.getAplctSn());
 
-        Assertions.assertThat(aplctprgrsRepository.findByAplctUserMng_AplctSn(aplctUser.getAplctSn())).isNotEmpty();
+        Assertions.assertThat(aplctprgrsRepository.findByAplctUserMng_AplctSn_OrderByAdRoundsBgngYmdDesc(aplctUser.getAplctSn())).isNotEmpty();
     }
 }

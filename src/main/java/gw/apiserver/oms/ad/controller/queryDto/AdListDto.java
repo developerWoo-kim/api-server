@@ -13,14 +13,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class AdListDto extends AdMngDto {
-    private String adUserNm;        // 광고주명
     private int matchingCnt;        // 응모 인원수
     private int pasbltyCnt;         // 총 응모가능 인원 수
     List<AplctCurrentStatusDto> AplctCurrentStatus = new ArrayList<>();
 
     public AdListDto(AdMng adMng) {
         super(adMng);
-        this.adUserNm = adMng.getUser().getUserNm();
     }
 
     public void addMatchingCnt(int count) {
@@ -36,7 +34,10 @@ public class AdListDto extends AdMngDto {
     @AllArgsConstructor
     public static class AplctCurrentStatusDto{
         private String code;
+        private String codeNm;
         private Integer aplctPsbltyCnt;
         private Long matchingCnt;
+        private Integer allocAmt;
+
     }
 }

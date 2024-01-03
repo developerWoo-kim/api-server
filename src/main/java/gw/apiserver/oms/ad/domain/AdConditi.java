@@ -27,13 +27,13 @@ public class AdConditi {
     @EmbeddedId
     private AdConditiId adConditiId;            // 복합키 ( AD_SN, SORT)
 
-    @Enumerated(EnumType.STRING)
-    private VhclLoadweightCd vhclLoadweightCd;  // 차량 적재무게 코드
+//    @Enumerated(EnumType.STRING)
+    private String vhclLoadweightCd;  // 차량 적재무게 코드
     private int aplctPsbltycnt;                 // 응모 가능수
     private int allocAmt;                       // 배당 금액
 
     @Builder
-    public AdConditi(AdConditiId adConditiId, int sort, VhclLoadweightCd vhclLoadweightCd, int aplctPsbltycnt, int allocAmt) {
+    public AdConditi(AdConditiId adConditiId, int sort, String vhclLoadweightCd, int aplctPsbltycnt, int allocAmt) {
         this.adConditiId = adConditiId;
         this.vhclLoadweightCd = vhclLoadweightCd;
         this.aplctPsbltycnt = aplctPsbltycnt;

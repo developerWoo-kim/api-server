@@ -1,7 +1,10 @@
 package gw.apiserver.oms.ad.service;
 
+import gw.apiserver.common.paging.PagingForm;
 import gw.apiserver.common.paging.SearchCondition;
+import gw.apiserver.common.utils.pagination.Pagination;
 import gw.apiserver.oms.ad.controller.queryDto.AdApplyDto;
+import gw.apiserver.oms.ad.controller.queryDto.AdMatchListDto;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +24,8 @@ public interface AdApiService {
      */
     Page<AdListDto> searchAdPagingList(SearchCondition condition, Pageable pageable);
 
+    Pagination<AdListDto> adPagingList(PagingForm form);
+
     /**
      * 광고 응모
      * @param adSn String 광고 일련번호
@@ -34,4 +39,6 @@ public interface AdApiService {
      * @return List<AdApplyDto>
      */
     List<AdApplyDto> findApplyAdList(String userId);
+
+    Pagination<AdMatchListDto> findMatchAdList(PagingForm form, String userSn);
 }

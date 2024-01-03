@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -89,6 +90,7 @@ public class AplctUserMng {
         aplctUser.setAdMng(admng);
         aplctUser.setUser(user);
         aplctUser.setAdPrgrsSttscd(AdPrgrsSttsCd.MNG004001);
+        aplctUser.setAplctRegDt(LocalDateTime.now());
 
         return aplctUser;
     }

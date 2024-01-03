@@ -4,8 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import gw.apiserver.oms.aplct.repository.AplctUserMngCustomRepository;
 import lombok.RequiredArgsConstructor;
 
-import static gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd.MNG004001;
-import static gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd.MNG004003;
+import static gw.apiserver.oms.aplct.domain.AdPrgrsSttsCd.*;
 import static gw.apiserver.oms.aplct.domain.QAplctUserMng.aplctUserMng;
 import static gw.apiserver.oms.user.domain.QUser.user;
 
@@ -25,7 +24,7 @@ public class AplctUserMngCustomRepositoryImpl implements AplctUserMngCustomRepos
                 .from(aplctUserMng)
                 .leftJoin(user).on(aplctUserMng.user.userSn.eq(user.userSn))
                 .where(
-                        aplctUserMng.adPrgrsSttscd.eq(MNG004001)
+                        aplctUserMng.adPrgrsSttscd.eq(MNG004002)
                                 .or(aplctUserMng.adPrgrsSttscd.eq(MNG004003)),
                         user.userSn.eq(userSn)
                 )

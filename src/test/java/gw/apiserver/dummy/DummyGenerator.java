@@ -102,7 +102,7 @@ public class DummyGenerator {
         AdConditi adConditi = new AdConditi().builder()
                 .adConditiId(new AdConditiId(adMng.getAdSn(),1))
                 .aplctPsbltycnt(10)
-                .vhclLoadweightCd(VhclLoadweightCd.MNG001001)
+                .vhclLoadweightCd(VhclLoadweightCd.MNG001001.getCode())
                 .allocAmt(150000)
                 .build();
         adConditiRepository.save(adConditi);
@@ -110,7 +110,7 @@ public class DummyGenerator {
         AdConditi adConditi2 = new AdConditi().builder()
                 .adConditiId(new AdConditiId(adMng.getAdSn(),2))
                 .aplctPsbltycnt(5)
-                .vhclLoadweightCd(VhclLoadweightCd.MNG001002)
+                .vhclLoadweightCd(VhclLoadweightCd.MNG001002.getCode())
                 .allocAmt(250000)
                 .build();
         adConditiRepository.save(adConditi2);
@@ -118,7 +118,7 @@ public class DummyGenerator {
         AdConditi adConditi3 = new AdConditi().builder()
                 .adConditiId(new AdConditiId(adMng.getAdSn(),3))
                 .aplctPsbltycnt(20)
-                .vhclLoadweightCd(VhclLoadweightCd.MNG001004)
+                .vhclLoadweightCd(VhclLoadweightCd.MNG001004.getCode())
                 .allocAmt(450000)
                 .build();
         adConditiRepository.save(adConditi3);

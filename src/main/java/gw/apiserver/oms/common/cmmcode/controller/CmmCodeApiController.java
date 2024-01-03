@@ -32,10 +32,7 @@ public class CmmCodeApiController {
             summary = "공통 코드 조회",
             description = "공통 코드 조회",
             responses = {
-
                     @ApiResponse(responseCode = "200", description = "조회 성공"),
-                    @ApiResponse(responseCode = "401", description = "Access Token 누락"),
-                    @ApiResponse(responseCode = "403", description = "Refresh Token 만료 or Refresh Token 인증 실패")
             }
     )
     @ApiImplicitParams({

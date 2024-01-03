@@ -49,7 +49,7 @@ public class AplctprgrsServiceTest {
         AplctUserMng aplctUser = dummyGenerator.createAplctUser(ad, AdPrgrsSttsCd.MNG004003, 0, LocalDateTime.now());
         dummyGenerator.createAplctprgrs(ad, aplctUser);
 
-        List<Aplctprgrs> aplctprgrsList = aplctprgrsRepository.findByAplctUserMng_AplctSn(aplctUser.getAplctSn()).orElseThrow();
+        List<Aplctprgrs> aplctprgrsList = aplctprgrsRepository.findByAplctUserMng_AplctSn_OrderByAdRoundsBgngYmdDesc(aplctUser.getAplctSn());
         Aplctprgrs aplctprgrs1 = aplctprgrsList.get(0);
 
         String leftSn = commonFileService.save("ad_proof", fileToMultipartFile("/Users/gimgeon-u/Desktop/danggeon.png"));

@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 @Data
 @NoArgsConstructor
 public class PagingForm {
+    private String lastId;
+    private int count = 5;
     private int page;
 
     /**

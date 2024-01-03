@@ -84,7 +84,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().antMatchers(
                 "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs", "/v3/api-docs",
-                "/auth/token", "/auth/reissue", "/error",
+                "/api/v1/auth/token", "/auth/reissue", "/error",
                 "/api/v1/user/join","/api/v1/user/id-duple-check/**","/api/v1/code/detail/**"
 //                "/api/**"
         );

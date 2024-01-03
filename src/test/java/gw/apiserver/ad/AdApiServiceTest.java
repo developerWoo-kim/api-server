@@ -30,7 +30,7 @@ public class AdApiServiceTest {
         Page<AdListDto> adPageList = adMngRepository.findAdPageList(condition, pageRequest);
 
         for (AdListDto adList : adPageList.getContent()) {
-            List<AdListDto.AplctCurrentStatusDto> aplctCurrentStatus = adMngRepository.findAplctCurrentStatus(adList.getAdSn());
+            List<AdListDto.AplctCurrentStatusDto> aplctCurrentStatus = adMngRepository.findAplctCurrentStatus(adList.getId());
             adList.setAplctCurrentStatus(aplctCurrentStatus);
 
             int matchingCnt = 0;

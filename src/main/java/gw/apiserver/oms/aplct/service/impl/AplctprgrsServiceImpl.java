@@ -3,14 +3,19 @@ package gw.apiserver.oms.aplct.service.impl;
 import gw.apiserver.common.utils.reponse.code.CommonError;
 import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import gw.apiserver.oms.aplct.controller.form.AdProofForm;
+import gw.apiserver.oms.aplct.controller.query.AdProofDetailDto;
 import gw.apiserver.oms.aplct.domain.Aplctprgrs;
-import gw.apiserver.oms.aplct.repository.AplctUserMngRepository;
 import gw.apiserver.oms.aplct.repository.AplctprgrsRepository;
 import gw.apiserver.oms.aplct.service.AplctprgrsService;
 import gw.apiserver.oms.cfm.service.CommonFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,5 +42,19 @@ public class AplctprgrsServiceImpl implements AplctprgrsService {
         aplctprgrs.setPnlKm(form.getPnlKm());
         aplctprgrs.setDriveKm(3504);
         aplctprgrs.setEvdncYn("Y");
+        aplctprgrs.setEvdncRegDt(LocalDateTime.now());
+    }
+
+    @Override
+    public List<AdProofDetailDto> findAdRoofDetail(String aplctSn) {
+        List<Aplctprgrs> findAdProofDetail = aplctprgrsRepository.findByAplctUserMng_AplctSn_OrderByAdRoundsBgngYmdDesc(aplctSn);
+        if(findAdProofDetail.isEmpty()) throw new GlobalApiException(CommonError.APLCT_PRGRS_NOT_FOUND);
+
+        List<AdProofDetailDto> list = new ArrayList<>();
+        for(Aplctprgrs aplctprgrs : findAdProofDetail) {
+            list.add(AdProofDetailDto.createAdProofDetail(aplctprgrs));
+        }
+
+        return list;
     }
 }

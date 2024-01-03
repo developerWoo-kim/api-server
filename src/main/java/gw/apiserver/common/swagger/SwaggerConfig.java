@@ -17,8 +17,6 @@ import java.util.*;
 // 스프링 부트를 사용하는 경우 @Configuration만, Spring이면 @EnableSwagger2도 필요
 @Configuration
 public class SwaggerConfig {
-    private final String BASE_PACKAGE = "gw.apiserver";
-
     @Bean
     public Docket api() {
         String pathUri = "/api/**";

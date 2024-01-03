@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface AplctprgrsRepository extends JpaRepository<Aplctprgrs, String> {
+public interface AplctprgrsRepository extends JpaRepository<Aplctprgrs, String>, AplctprgrsCustomRepository {
     /**
      * 증빙 회차 조회
      * @param aplctSn String
      * @return Optional<List<Aplctprgrs>>
      */
-    Optional<List<Aplctprgrs>> findByAplctUserMng_AplctSn(String aplctSn);
+    List<Aplctprgrs> findByAplctUserMng_AplctSn_OrderByAdRoundsBgngYmdDesc(String aplctSn);
 }

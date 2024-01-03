@@ -1,9 +1,12 @@
 package gw.apiserver.oms.ad.service;
 
+import gw.apiserver.common.paging.PagingForm;
 import gw.apiserver.common.paging.SearchCondition;
+import gw.apiserver.common.utils.pagination.Pagination;
 import gw.apiserver.common.utils.reponse.code.CommonError;
 import gw.apiserver.common.utils.reponse.exception.GlobalApiException;
 import gw.apiserver.oms.ad.controller.queryDto.AdApplyDto;
+import gw.apiserver.oms.ad.controller.queryDto.AdMatchListDto;
 import gw.apiserver.oms.ad.controller.queryDto.AdListDto;
 import gw.apiserver.oms.ad.domain.AdConditi;
 import gw.apiserver.oms.ad.domain.AdMng;
@@ -42,7 +45,7 @@ public class AdApiServiceImpl implements AdApiService {
         Page<AdListDto> adPageList = adMngRepository.findAdPageList(condition, pageable);
 
         for (AdListDto adList : adPageList.getContent()) {
-            List<AdListDto.AplctCurrentStatusDto> aplctCurrentStatus = adMngRepository.findAplctCurrentStatus(adList.getAdSn());
+            List<AdListDto.AplctCurrentStatusDto> aplctCurrentStatus = adMngRepository.findAplctCurrentStatus(adList.getId());
             adList.setAplctCurrentStatus(aplctCurrentStatus);
 
             int matchingCnt = 0;
@@ -60,9 +63,32 @@ public class AdApiServiceImpl implements AdApiService {
     }
 
     @Override
+    public Pagination<AdListDto> adPagingList(PagingForm form) {
+        List<AdListDto> adList = adMngRepository.findAdList(form.getCount(), form.getLastId());
+
+        for (AdListDto ad : adList) {
+            List<AdListDto.AplctCurrentStatusDto> aplctCurrentStatus = adMngRepository.findAplctCurrentStatus(ad.getId());
+            ad.setAplctCurrentStatus(aplctCurrentStatus);
+
+            int matchingCnt = 0;
+            int psbltyCnt = 0;
+            for (AdListDto.AplctCurrentStatusDto currentStatus : aplctCurrentStatus) {
+                matchingCnt += currentStatus.getMatchingCnt();
+                psbltyCnt += currentStatus.getAplctPsbltyCnt();
+            }
+
+            ad.addMatchingCnt(matchingCnt);
+            ad.addPasbltyCnt(psbltyCnt);
+        }
+
+        boolean hasNextData = !adList.isEmpty() && adMngRepository.hasNextData(adList.get(adList.size() - 1).getId()).isPresent();
+        return Pagination.createPagination(hasNextData, adList);
+    }
+
+    @Override
     @Transactional
     public void applyAd(String adSn, String userId) {
-        User user = userRepository.findById(userId).orElseThrow(
+        User user = userRepository.findByUserId(userId).orElseThrow(
                 () -> new IllegalArgumentException("회원 정보가 존재하지 않습니다."));  // 회원정보 조회
         AdMng adMng = adMngRepository.findById(adSn).orElseThrow(
                 () -> new IllegalArgumentException("광고가 존재하지 않습니다."));
@@ -77,7 +103,7 @@ public class AdApiServiceImpl implements AdApiService {
             throw new GlobalApiException(CommonError.AD_ALREADY_EXISTS_RUNNING);
         // 응모조건에 해당하는지
         if(adMngRepository.findAdConditi(adSn).stream()
-                .noneMatch(adConditi -> adConditi.getVhclLoadweightCd().equals(user.getVhclLoadweightCd())))
+                .noneMatch(adConditi -> adConditi.getVhclLoadweightCd().equals(user.getVhclLoadweightCd().getCode())))
             throw new GlobalApiException(CommonError.AD_NOT_MATCH_CONDITION);
 
 
@@ -126,6 +152,13 @@ public class AdApiServiceImpl implements AdApiService {
         }
 
         return adApplyDtoList;
+    }
+
+
+    @Override
+    public Pagination<AdMatchListDto> findMatchAdList(PagingForm form, String userSn) {
+        List<AdMatchListDto> matchAdList = adMngRepository.findMatchAdList(form.getCount(), form.getLastId(), userSn);
+        return Pagination.createPagination(true, matchAdList);
     }
 
 }
